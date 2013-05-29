@@ -4,10 +4,8 @@
  */
 package wsn.pp.filter;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
-import java.util.List;
 
 /**
  *
@@ -35,14 +33,19 @@ public class LinkATMFFilter extends Filter {
                 clone.removeFirst();
                 clone.removeLast();
             }
-            double mean = 0,error = 0;
+            double mean = 0,stddev = 0;
             for(Double value: clone){
                 mean += value;
             }
             mean = mean / clone.size();
+            for(Double value: clone){
+                stddev += (mean - value)*(mean - value);
+            }
+            stddev = Math.sqrt( stddev );
             data.removeFirst();
             //error = Collections.max(data)-Collections.min(data);
             ls = new LinkInfo(ls);
+            ls.metaData.put("StdDev", stddev);
             ls.power = mean;
             super.recvLinkInfo(ls);
         }
