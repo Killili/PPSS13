@@ -59,11 +59,10 @@ public class GNUPlot extends JFrame {
 
         ProcessBuilder builder = new ProcessBuilder(command);
         builder.directory(wdir);
-        builder.redirectErrorStream(true);
+        builder.redirectErrorStream(false);
 
         process = builder.start();
         os = process.getOutputStream();
-        InputStream es = process.getErrorStream();
         InputStream is = process.getInputStream();
 
         os.write(script.getBytes());

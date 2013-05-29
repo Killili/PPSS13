@@ -1,10 +1,6 @@
 package wsn.pp.data;
 
 
-import wsn.pp.filter.LinkInfoReciver;
-import wsn.pp.filter.LinkInfo;
-import wsn.pp.messages.SnoopBCMsg;
-import wsn.pp.messages.ConfigMsg;
 import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
@@ -21,6 +17,10 @@ import net.tinyos.message.MoteIF;
 import net.tinyos.packet.BuildSource;
 import net.tinyos.packet.PhoenixSource;
 import net.tinyos.util.PrintStreamMessenger;
+import wsn.pp.filter.LinkInfo;
+import wsn.pp.filter.LinkInfoReciver;
+import wsn.pp.messages.ConfigMsg;
+import wsn.pp.messages.SnoopBCMsg;
 
 /*
  * To change this template, choose Tools | Templates
@@ -94,7 +94,8 @@ public class Datasource implements MessageListener {
     public Datasource(LinkInfoReciver slave,File file) {
         this.slave = slave;
         if( file == null ){
-            mote = new MoteIF(PrintStreamMessenger.err);
+            //mote = new MoteIF(PrintStreamMessenger.err);
+            mote = new MoteIF( BuildSource.makePhoenix("sf@192.168.178.28:9002", PrintStreamMessenger.err));
             mote.registerListener(new SnoopBCMsg(), this);
         } else {
             playRecording(file);
@@ -118,7 +119,7 @@ public class Datasource implements MessageListener {
     private synchronized void messageReceivedWithTimestamp(int node, Message msg,long timestamp) {
         if (slave != null && msg instanceof SnoopBCMsg) {
             SnoopBCMsg sm = (SnoopBCMsg) msg;
-            Logger.getLogger(Datasource.class.getName()).log(Level.INFO, String.format("Msg from %d", sm.get_nodeid()));
+            //Logger.getLogger(Datasource.class.getName()).log(Level.INFO, String.format("Msg from %d", sm.get_nodeid()));
             for (int i = 0; i < 10; i++) {
                 slave.recvLinkInfo(new LinkInfo(i+1, sm.get_nodeid(), sm.get_othernodes()[i],timestamp));
             }
@@ -128,7 +129,7 @@ public class Datasource implements MessageListener {
                 try {
                     out.writeObject(new Packet(System.nanoTime() - startTime, node, msg));
                 } catch (IOException ex) {
-                    Logger.getLogger(Datasource.class.getName()).log(Level.SEVERE, null, ex);
+                    //Logger.getLogger(Datasource.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         }

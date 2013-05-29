@@ -11,7 +11,10 @@ import net.tinyos.message.Message;
 import net.tinyos.message.MessageListener;
 import net.tinyos.message.MoteIF;
 import wsn.pp.data.Datasource;
+import wsn.pp.filter.Filter;
 import wsn.pp.filter.LinkATMFFilter;
+import wsn.pp.filter.LinkInfoReciver;
+import wsn.pp.filter.LinkKNN;
 import wsn.pp.filter.LinkMedianFilter;
 import wsn.pp.filter.LinkPlot;
 import wsn.pp.gui.ConfigView;
@@ -25,30 +28,40 @@ public class Main implements MessageListener {
     public static void main(String[] args) {
         Main main = new Main();
     }
-    private MoteIF mote;
+    
     private View v;
     private ConfigView cv;
-
+    private final LinkFilter lf;
+    private final KNNControl knnc;
+    
+    private void addLink(int s,int d){
+        Filter atmf = new LinkATMFFilter(11,0.2f, null);
+        LinkKNN knn = new LinkKNN(3, null);
+        
+        atmf.registerFilter(knn);
+        lf.registerLinkFilter(s, d, atmf);
+        knnc.addKNN(knn);
+        
+    }
+    
     public Main() {
         // Set up topologie View
-        v = new View();
-        v.setVisible(true);
-        v.initNodes(getInitPoints(5));
+        //v = new View();
+        //v.setVisible(true);
+        //v.initNodes(getInitPoints(5));
         
         // Configure Filters
-        LinkFilter lf = new LinkFilter();
-        lf.registerLinkFilter(2, 3, new LinkPlot("Raw"));
-        //lf.registerLinkFilter(2, 3, new LinkATMFFilter(11,0.1f, new LinkPlot("ATMF")));
-        //lf.registerLinkFilter(2, 3, new LinkMeanFilter(10, new LinkPlot("Mean")));
-        lf.registerLinkFilter(2, 3, new LinkMedianFilter(10, new LinkPlot("Median")));
-        lf.registerLinkFilter(2, 3, new LinkMedianFilter(10, new LinkATMFFilter(11,0.1f, new LinkPlot("Median+ATMF"))));
+        lf = new LinkFilter();
+        //lf.registerLinkFilter(2, 3, new LinkPlot("Raw"));
         
-        //lf.registerLinkFilter(2, 3, new LinkMeanValueFilter(10, new LinkPrinter()));
-        //LinkPlot test = new LinkPlot();
-        //test.show();
-        
+        knnc = new KNNControl();
+        knnc.setVisible(true);
         Datasource loggin = new Datasource(lf,null);
-
+        
+        addLink(5, 4);
+        addLink(1, 5);
+        addLink(1, 4);
+        
         //Datasource loggin = new Datasource(lf,new File("Pentagram-e"));
 
         //cv = new ConfigView(loggin);
