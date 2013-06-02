@@ -16,10 +16,10 @@ import java.util.Map;
  */
 public class LinkFilter implements LinkInfoReciver {
 
-    private Map<Map.Entry<Integer, Integer>, List<LinkInfoReciver>> filterList = new HashMap<>();
+    private Map<Map.Entry<Integer, Integer>, List<LinkInfoReciver>> filterList = new HashMap<Map.Entry<Integer, Integer>, List<LinkInfoReciver>>();
 
     public void registerLinkFilter(int sourceNode, int destNode, LinkInfoReciver filter) {
-        AbstractMap.SimpleEntry<Integer, Integer> pair = new AbstractMap.SimpleEntry<>(sourceNode, destNode);
+        AbstractMap.SimpleEntry<Integer, Integer> pair = new AbstractMap.SimpleEntry<Integer, Integer>(sourceNode, destNode);
         if (filterList.containsKey(pair)) {
             filterList.get(pair).add(filter);
         } else {

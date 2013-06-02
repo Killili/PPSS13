@@ -90,7 +90,11 @@ public class GNUPlot extends JFrame {
             try {
                 graph(lastPlot);
                 g.drawImage(img, 0, 25, this);
-            } catch (InterruptedException | IOException | URISyntaxException ex) {
+            } catch (InterruptedException ex) {
+                Logger.getLogger(GNUPlot.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
+                Logger.getLogger(GNUPlot.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (URISyntaxException ex) {
                 Logger.getLogger(GNUPlot.class.getName()).log(Level.SEVERE, null, ex);
             }
         }

@@ -33,6 +33,7 @@ public class Main implements MessageListener {
     private ConfigView cv;
     private final LinkFilter lf;
     private final KNNControl knnc;
+    private VisualGuiControl visualGui;
     
     private void addLink(int s,int d){
         Filter atmf = new LinkATMFFilter(11,0.2f, null);
@@ -62,6 +63,7 @@ public class Main implements MessageListener {
         addLink(1, 5);
         addLink(1, 4);
         
+        visualGui = new VisualGuiControl(lf);
         //Datasource loggin = new Datasource(lf,new File("Pentagram-e"));
 
         //cv = new ConfigView(loggin);

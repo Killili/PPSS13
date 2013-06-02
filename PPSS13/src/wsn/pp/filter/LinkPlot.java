@@ -25,7 +25,7 @@ public class LinkPlot extends Filter {
     public LinkPlot(String title, LinkInfoReciver lsr) {
         super(lsr);
         this.title = title;
-        data = new ArrayList<>();
+        data = new ArrayList<LinkInfo>();
         plot = new GNUPlot();
     }
 
@@ -44,7 +44,11 @@ public class LinkPlot extends Filter {
             plot.plot("set terminal png\n plot '-' title \"" + this.title + "( " + ls.sourceNode + " -> " + ls.destinationNode + " )\" with linespoints\n" + dataString + "e\nquit\n");
 
 
-        } catch (InterruptedException | IOException | URISyntaxException ex) {
+        } catch (InterruptedException ex) {
+            Logger.getLogger(LinkPlot.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(LinkPlot.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (URISyntaxException ex) {
             Logger.getLogger(LinkPlot.class.getName()).log(Level.SEVERE, null, ex);
         }
 

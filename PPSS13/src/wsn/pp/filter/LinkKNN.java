@@ -31,7 +31,7 @@ public class LinkKNN extends Filter {
     public LinkKNN(int k, LinkInfoReciver nextFilter) {
         super(nextFilter);
         this.k = k;
-        this.data = new HashMap<>();
+        this.data = new HashMap<String, List<DataPoint>>();
         this.plot = new GNUPlot();
     }
 
@@ -51,11 +51,11 @@ public class LinkKNN extends Filter {
     }
 
     public void forgetAll(String type) {
-        this.data = new HashMap<>();
+        this.data = new HashMap<String, List<DataPoint>>();
     }
 
     private List<Neighbores> findNearestNeighbores(DataPoint dp) {
-        List<Neighbores> list = new LinkedList<>();
+        List<Neighbores> list = new LinkedList<Neighbores>();
         for (String type : data.keySet()) {
             for (DataPoint other : data.get(type)) {
                 double dist = other.position.distanceTo(dp.position);
@@ -72,13 +72,13 @@ public class LinkKNN extends Filter {
     @Override
     public void recvLinkInfo(LinkInfo ls) {
         if (learning && ls.metaData.containsKey("StdDev")) {
-            data.get(learnType).add(new DataPoint(learnType, new Point(ls.power, (double) ls.metaData.get("StdDev"))));
+            data.get(learnType).add(new DataPoint(learnType, new Point(ls.power, (Double)(ls.metaData.get("StdDev")))));
         }
 
         try {
             String dataString = "";
             String plotString = "set terminal png\n plot ";
-            DataPoint current = new DataPoint("Current", new Point(ls.power, (double) ls.metaData.get("StdDev")));
+            DataPoint current = new DataPoint("Current", new Point(ls.power, (Double) ls.metaData.get("StdDev")));
 
             for (String type : data.keySet()) {
                 if (data.get(type).size() > 0) {
@@ -100,10 +100,14 @@ public class LinkKNN extends Filter {
             }
 
             plotString += "'-' title \"Current\" with circles fs transparent solid 0.15 noborder";
-            dataString += ls.power + " " + (double) ls.metaData.get("StdDev") + "\ne\n";
+            dataString += ls.power + " " + (Double) ls.metaData.get("StdDev") + "\ne\n";
 
             plot.plot(plotString + "\n" + dataString );
-        } catch (InterruptedException | IOException | URISyntaxException ex) {
+        } catch (InterruptedException ex) {
+            Logger.getLogger(LinkKNN.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(LinkKNN.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (URISyntaxException ex) {
             Logger.getLogger(LinkKNN.class.getName()).log(Level.SEVERE, null, ex);
         }
 

@@ -13,7 +13,7 @@ import java.util.List;
  */
 public class Filter implements LinkInfoReciver {
 
-    private List<LinkInfoReciver> childs = new ArrayList<>();
+    private List<LinkInfoReciver> childs = new ArrayList<LinkInfoReciver>();
     public Filter(LinkInfoReciver nextFilter) {
         registerFilter(nextFilter);
     }
