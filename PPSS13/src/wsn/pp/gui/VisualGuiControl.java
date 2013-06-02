@@ -26,6 +26,7 @@ public class VisualGuiControl extends Filter implements LinkInfoReciver{
         //view.getRenderPanel().add(panel);
         view.setVisible(true);
         
+        
     }
 
     @Override
