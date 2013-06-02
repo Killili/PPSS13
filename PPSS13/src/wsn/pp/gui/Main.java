@@ -1,5 +1,6 @@
 package wsn.pp.gui;
 
+
 import wsn.pp.filter.LinkFilter;
 import wsn.pp.filter.LinkMeanFilter;
 import wsn.pp.filter.LinkPrinter;
@@ -19,6 +20,7 @@ import wsn.pp.filter.LinkMedianFilter;
 import wsn.pp.filter.LinkPlot;
 import wsn.pp.gui.ConfigView;
 import wsn.pp.gui.View;
+import wsn.pp.gui.view.VisualGuiControl;
 
 public class Main implements MessageListener {
 
@@ -37,11 +39,12 @@ public class Main implements MessageListener {
     
     private void addLink(int s,int d){
         Filter atmf = new LinkATMFFilter(11,0.2f, null);
-        LinkKNN knn = new LinkKNN(3, null);
+        //LinkKNN knn = new LinkKNN(3, null);
         
-        atmf.registerFilter(knn);
+        atmf.registerFilter(visualGui);
+        //atmf.registerFilter(knn);
         lf.registerLinkFilter(s, d, atmf);
-        knnc.addKNN(knn);
+        //knnc.addKNN(knn);
         
     }
     
@@ -53,17 +56,20 @@ public class Main implements MessageListener {
         
         // Configure Filters
         lf = new LinkFilter();
+        
         //lf.registerLinkFilter(2, 3, new LinkPlot("Raw"));
         
         knnc = new KNNControl();
         knnc.setVisible(true);
+        Thread t = new Thread(visualGui = new VisualGuiControl(null));
+        t.start();
         Datasource loggin = new Datasource(lf,null);
         
-        addLink(5, 4);
+        addLink(7, 6);
         addLink(1, 5);
         addLink(1, 4);
+       
         
-        visualGui = new VisualGuiControl(lf);
         //Datasource loggin = new Datasource(lf,new File("Pentagram-e"));
 
         //cv = new ConfigView(loggin);
