@@ -95,7 +95,7 @@ public class Datasource implements MessageListener {
         this.slave = slave;
         if( file == null ){
             //mote = new MoteIF(PrintStreamMessenger.err);
-            mote = new MoteIF( BuildSource.makePhoenix("sf@192.168.178.28:9002", PrintStreamMessenger.err));
+            mote = new MoteIF( BuildSource.makePhoenix("sf@192.168.178.39:9002", PrintStreamMessenger.err));
             mote.registerListener(new SnoopBCMsg(), this);
         } else {
             playRecording(file);

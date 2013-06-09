@@ -1,24 +1,14 @@
 package wsn.pp.gui;
 
-import wsn.pp.filter.LinkFilter;
-import wsn.pp.filter.LinkMeanFilter;
-import wsn.pp.filter.LinkPrinter;
-import wsn.pp.messages.SnoopBCMsg;
 import java.awt.Point;
-import java.io.File;
-
 import net.tinyos.message.Message;
 import net.tinyos.message.MessageListener;
-import net.tinyos.message.MoteIF;
 import wsn.pp.data.Datasource;
 import wsn.pp.filter.Filter;
 import wsn.pp.filter.LinkATMFFilter;
-import wsn.pp.filter.LinkInfoReciver;
+import wsn.pp.filter.LinkFilter;
 import wsn.pp.filter.LinkKNN;
-import wsn.pp.filter.LinkMedianFilter;
-import wsn.pp.filter.LinkPlot;
-import wsn.pp.gui.ConfigView;
-import wsn.pp.gui.View;
+import wsn.pp.messages.SnoopBCMsg;
 
 public class Main implements MessageListener {
 
@@ -58,6 +48,10 @@ public class Main implements MessageListener {
         knnc = new KNNControl();
         knnc.setVisible(true);
         Datasource loggin = new Datasource(lf,null);
+        
+        loggin.sendConfig(1,50, 31);
+        loggin.sendConfig(4,50, 31);
+        loggin.sendConfig(5,50, 31);
         
         addLink(5, 4);
         addLink(1, 5);
