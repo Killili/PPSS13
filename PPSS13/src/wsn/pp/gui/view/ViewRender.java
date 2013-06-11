@@ -20,10 +20,11 @@ public class ViewRender  extends PApplet{
     VisualGuiControl control;
     VisualGuiModel model;
     private SensorNode selectedNode;
+    private double[][] heatMap;
     
     public ViewRender(VisualGuiControl cont) {
         control = cont;
-        
+        heatMap = new double[600][600];
     }
     
 
@@ -79,9 +80,21 @@ public class ViewRender  extends PApplet{
         rect(0, 0, 600, 600);
        fill(2, 25, 55);
         //System.out.println("draw");
-       
+        calcHeatmap();
+        
         if(model==null)
             return;
+        
+        for(int x=0;x<heatMap.length;x++)
+            for(int y=0;y<heatMap[0].length;y++)
+            {
+                if(heatMap[x][y]<2)
+                    continue;
+                //System.out.println("h"+heatMap[x][y]);
+                stroke((int)(heatMap[x][y]*25),23,255-(int)(heatMap[x][y]*25));
+                rect(x, y, 1, 1);
+            }
+        
         for(Object nod:model.getNodes().toArray())
         {
             fill(2, 25, 55);
@@ -89,7 +102,7 @@ public class ViewRender  extends PApplet{
             ellipse((int)node.position.x,(int)node.position.y, 10, 10);
             
             fill(24, 215, 55);
-            text(""+node.id, (int)node.position.x,(int)node.position.y);
+            text(""+node.id, (int)node.position.x+7,(int)node.position.y+7);
         }
         
         for(Object nod:model.getNodes().toArray())
@@ -104,7 +117,7 @@ public class ViewRender  extends PApplet{
                     continue;
                 if(node1.getRssi(node2.id)==0)
                     continue;
-                System.out.println(node1.getMetadata(node2.id));
+                //System.out.println(node1.getMetadata(node2.id));
                 if(node1.getMetadata(node2.id)!=null && node1.getMetadata(node2.id).get("StdDev")!=null)
                 {
                     strokeWeight(3);
@@ -118,6 +131,96 @@ public class ViewRender  extends PApplet{
                 Point mid = getMid(node1.position, node2.position);
                 text("r:"+(((double)Math.round(node1.getRssi(node2.id)*100))/100), mid.x, mid.y);
                 stroke(231,15,85);
+            }
+        }
+        
+    }
+    
+    private void calcHeatmap()
+    {
+        double coolingRate = 0.2;
+        double heatMultiplay =0.5;
+        double spreadRate = 0.1;
+        int range = 2;
+      
+        for(Object nod:model.getNodes().toArray())
+        {
+           
+            SensorNode node1 = (SensorNode) nod;
+            for(Object nod2:model.getNodes().toArray())
+            {       
+               
+                SensorNode node2 = (SensorNode) nod2;
+                if(node2 == node1)
+                    continue;
+                if(node1.getRssi(node2.id)==0)
+                    continue;
+                
+                if(node1.getMetadata(node2.id)!=null && node1.getMetadata(node2.id).get("StdDev")!=null)
+                {
+                    strokeWeight(3);
+                    double d =((Double)(node1.getMetadata(node2.id).get("StdDev"))*10);
+                    heatPath(heatMap, node1.position, node2.position,(int)(d*heatMultiplay));
+                }
+            }
+        }
+        
+        coolMap(heatMap, coolingRate);
+        heatMap =spreadheat(heatMap, spreadRate, range);
+        
+    }
+    
+    private double[][] spreadheat(double[][] map,double rate,int range)
+    {
+        double[][] out = new double[map.length][map[0].length];
+        for(int x=0;x<map.length;x++)
+            for(int y=0;y<map[0].length;y++)
+                spreadHeatPoint(out, map, rate, range, x, y);
+        return out;
+    }
+    
+    private void spreadHeatPoint(double[][] map,double[][] sourceMap,double rate,int range,int x,int y)
+    {
+        if(sourceMap[x][y]== 0)
+            return;
+        for(int xOff = -range;xOff<=range;xOff++)
+             for(int yOff = -range;yOff<=range;yOff++)
+             {
+                 if(!checkPosition(map, x+xOff, y+yOff)||(xOff==0&&yOff==0))
+                     continue;
+                 map[x+xOff][y+yOff]+= sourceMap[x][y]*rate;
+             }
+    }
+    
+    private boolean checkPosition(double[][] map,int x, int y)
+    {
+        return x>=0 && y>=0&& map.length>x && map[0].length>y;
+    }
+    
+    private void heatPath(double[][] map,Point a, Point b,int heat)
+    {
+        double pathLenght = a.distance(b),rest = pathLenght;
+        
+        double xPath,yPath;
+        xPath = b.x-a.x;
+        yPath = b.y-a.y;
+        
+        while(rest >0)
+        {
+            //System.out.println("Heat "+(a.x+xPath*(rest/pathLenght))+":"+((a.y+yPath*(rest/pathLenght)))+" -> "+heat);
+            map[(int)(a.x+xPath*(rest/pathLenght))][(int)(a.y+yPath*(rest/pathLenght))] = Math.max(heat,map[(int)(a.x+xPath*(rest/pathLenght))][(int)(a.y+yPath*(rest/pathLenght))]);
+            rest--;
+        }
+    }
+    
+    private void coolMap(double[][] map,double rate)
+    {
+        for(double[] x:map)
+        {
+            for(int i =0;i<x.length;i++)
+            {
+               // System.out.println("cool "+x[i] + " -> "+((int)(rate*x[i])));
+                x[i] = (rate*x[i]);
             }
         }
     }

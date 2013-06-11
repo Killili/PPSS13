@@ -5,6 +5,10 @@
 package wsn.pp.gui.view;
 
 import com.sun.java.swing.plaf.nimbus.SliderPainter;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import processing.core.PApplet;
@@ -23,11 +27,11 @@ public class VisualGuiControl extends Filter implements LinkInfoReciver,Runnable
     VisualGui view;
     VisualGuiModel m;
     
-    public VisualGuiControl(LinkInfoReciver lir)
+    public VisualGuiControl(LinkInfoReciver lir,String file)
     {
         super(lir);
-        
-        
+        if(file!=null)
+            loadFile(file);
         
         
     }
@@ -46,8 +50,8 @@ public class VisualGuiControl extends Filter implements LinkInfoReciver,Runnable
 
     @Override
     public void run() {
-        
-       m = new VisualGuiModel();
+        if(m== null)
+            m = new VisualGuiModel();
         view = new VisualGui(this);
    
         
@@ -70,12 +74,44 @@ public class VisualGuiControl extends Filter implements LinkInfoReciver,Runnable
                 } catch (InterruptedException ex) {
                     Logger.getLogger(VisualGuiControl.class.getName()).log(Level.SEVERE, null, ex);
                 }
+                
                 }
+                
             }
         });
         t.start();
-        for(int i=0;i<9;i++)
-            addNode();
+        //for(int i=0;i<9;i++)
+        //   addNode();
+    }
+    
+    public void loadFile(String name)
+    {
+        try
+        {
+        FileInputStream fileOut = new FileInputStream(name);
+        ObjectInputStream in = new ObjectInputStream(fileOut);
+        m = (VisualGuiModel) in.readObject();
+        
+        }
+        catch(Exception e)
+        {
+            System.err.println(e);
+        }
+        
+    }
+    
+    public void saveFile(String name)
+    {
+        try
+        {
+        FileOutputStream fileOut = new FileOutputStream(name);
+        ObjectOutputStream out = new ObjectOutputStream(fileOut);
+        out.writeObject(m);
+        }
+        catch(Exception e)
+        {
+            System.err.println(e);
+        }
     }
     
     

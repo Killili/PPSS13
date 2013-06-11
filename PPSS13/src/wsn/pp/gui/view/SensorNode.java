@@ -6,6 +6,7 @@ package wsn.pp.gui.view;
 
 import java.awt.Point;
 import java.awt.geom.Point2D;
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.Map;
 
@@ -13,7 +14,7 @@ import java.util.Map;
  *
  * @author wcu
  */
-public class SensorNode {
+public class SensorNode implements Serializable{
     public Point position;
     public int id;
     public double[] nodeRSSI;
@@ -31,7 +32,7 @@ public class SensorNode {
  
 
     void setRSSI(int destId, double val) {
-        System.out.println("Changed rssi"+id +"->"+destId+" to :"+val);
+        //System.out.println("Changed rssi"+id +"->"+destId+" to :"+val);
         nodeRSSI[destId-1] = val;
     }
 

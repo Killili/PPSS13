@@ -7,6 +7,7 @@ package wsn.pp.gui.view;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.Set;
 import wsn.pp.filter.LinkInfo;
@@ -15,7 +16,7 @@ import wsn.pp.filter.LinkInfo;
  *
  * @author wcu
  */
-public class VisualGuiModel {
+public class VisualGuiModel implements Serializable{
     LinkedList<SensorNode> nodes;
     private int updateTime = 100;
     public VisualGuiModel() {

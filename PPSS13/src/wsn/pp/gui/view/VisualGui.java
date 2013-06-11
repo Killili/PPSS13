@@ -94,6 +94,7 @@ public class VisualGui extends javax.swing.JFrame {
     private void btnAddNodeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddNodeActionPerformed
         System.out.println("dada");
         control.addNode();
+        control.saveFile("data.save");
     }//GEN-LAST:event_btnAddNodeActionPerformed
 
     

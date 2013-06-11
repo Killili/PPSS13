@@ -61,14 +61,22 @@ public class Main implements MessageListener {
         
         knnc = new KNNControl();
         knnc.setVisible(true);
-        Thread t = new Thread(visualGui = new VisualGuiControl(null));
+        Thread t = new Thread(visualGui = new VisualGuiControl(null,"data.save"));
         t.start();
         Datasource loggin = new Datasource(lf,null);
         
-        addLink(7, 6);
+        
+        for(int i=0;i<=8;i++)
+            for(int j=0;j<=8;j++)
+                addLink(i,j);
+       /* addLink(7, 6);
         addLink(1, 5);
         addLink(1, 4);
-       
+        addLink(1, 2);
+        addLink(1, 3);
+        addLink(1, 4);
+        addLink(1, 6);*/
+       loggin.playRecording(new File("naive-w-(a-b)"));
         
         //Datasource loggin = new Datasource(lf,new File("Pentagram-e"));
 

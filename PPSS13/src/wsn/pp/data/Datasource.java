@@ -57,12 +57,15 @@ public class Datasource implements MessageListener {
                 while (true) {
                     p = (Packet) in.readObject();
                     this.messageReceivedWithTimestamp(p.adress, new SnoopBCMsg(p.data, 8),p.time);
+                    Thread.sleep(200);
                 }
             } catch (EOFException e) { // Playback done
             } catch (ClassNotFoundException ex) {
                 Logger.getLogger(Datasource.class.getName()).log(Level.SEVERE, null, ex);
             } catch (IOException e) {
                 e.printStackTrace();
+            } catch (InterruptedException ex) {
+                Logger.getLogger(Datasource.class.getName()).log(Level.SEVERE, null, ex);
             }
 
         }
