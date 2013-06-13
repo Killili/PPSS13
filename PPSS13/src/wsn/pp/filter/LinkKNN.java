@@ -24,9 +24,11 @@ public class LinkKNN extends Filter {
 
     private String learnType;
     private Map<String, List<DataPoint>> data;
+    private List<DataPoint> learnPackage;
     private boolean learning;
     private int k;
     private final GNUPlot plot;
+    private int plotCounter = 0;
 
     public LinkKNN(int k, LinkInfoReciver nextFilter) {
         super(nextFilter);
@@ -38,12 +40,13 @@ public class LinkKNN extends Filter {
     public void learnType(String type) {
         this.learnType = type;
         this.data.put(type, new ArrayList<DataPoint>());
+        this.learnPackage = new ArrayList<DataPoint>();
         this.learning = true;
     }
 
     public void stopLearning() {
         this.learning = false;
-        
+
     }
 
     public void forget(String type) {
@@ -72,13 +75,39 @@ public class LinkKNN extends Filter {
     @Override
     public void recvLinkInfo(LinkInfo ls) {
         if (learning && ls.metaData.containsKey("StdDev")) {
-            data.get(learnType).add(new DataPoint(learnType, new Point(ls.power, (Double)(ls.metaData.get("StdDev")))));
+            learnPackage.add(new DataPoint(learnType, new Point(ls.power, (Double) (ls.metaData.get("StdDev")))));
+            if (learnPackage.size() > 100) {
+                DataPoint avgdp = new DataPoint(learnType, new Point(0, 0));
+                for (DataPoint dp : learnPackage) {
+                    avgdp.add(dp);
+                }
+                avgdp.div(learnPackage.size());
+                learnPackage.clear();
+                data.get(learnType).add(avgdp);
+            }
         }
 
+
+        DataPoint current = new DataPoint("Current", new Point(ls.power, (Double) ls.metaData.get("StdDev")));
+        List<Neighbores> neighbores = findNearestNeighbores(current);
+        
+        ls.metaData.put("Datapoint", current);
+        ls.metaData.put("Neighbores", neighbores );
+        
+        if( plotCounter > 50 ){
+            plot(ls, neighbores);
+            plotCounter = 0;
+        }
+        plotCounter += 1;
+
+
+        super.recvLinkInfo(ls);
+    }
+
+    private void plot(LinkInfo ls, List<Neighbores> neighbores) {
         try {
             String dataString = "";
-            String plotString = "set terminal png\n plot ";
-            DataPoint current = new DataPoint("Current", new Point(ls.power, (Double) ls.metaData.get("StdDev")));
+            String plotString = "set terminal png\nset title \"Connection " + ls.sourceNode + "->" + ls.destinationNode + "\"\n plot ";
 
             for (String type : data.keySet()) {
                 if (data.get(type).size() > 0) {
@@ -89,8 +118,8 @@ public class LinkKNN extends Filter {
                     dataString += "e\n";
                 }
             }
-            
-            List<Neighbores> neighbores = findNearestNeighbores(current);
+
+
             if (neighbores.size() > 0) {
                 plotString += "'-' title \"Neighbores\" with circles fs transparent solid 0.15 noborder,";
                 for (Neighbores neighbore : neighbores) {
@@ -102,7 +131,7 @@ public class LinkKNN extends Filter {
             plotString += "'-' title \"Current\" with circles fs transparent solid 0.15 noborder";
             dataString += ls.power + " " + (Double) ls.metaData.get("StdDev") + "\ne\n";
 
-            plot.plot(plotString + "\n" + dataString );
+            plot.plot(plotString + "\n" + dataString);
         } catch (InterruptedException ex) {
             Logger.getLogger(LinkKNN.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
@@ -110,8 +139,6 @@ public class LinkKNN extends Filter {
         } catch (URISyntaxException ex) {
             Logger.getLogger(LinkKNN.class.getName()).log(Level.SEVERE, null, ex);
         }
-
-        super.recvLinkInfo(ls);
     }
 
     private static class DataPoint {
@@ -122,6 +149,14 @@ public class LinkKNN extends Filter {
         public DataPoint(String Type, Point position) {
             this.Type = Type;
             this.position = position;
+        }
+
+        public void add(DataPoint p2) {
+            this.position.add(p2.position);
+        }
+
+        public void div(double div) {
+            this.position.div(div);
         }
     }
 
@@ -136,6 +171,16 @@ public class LinkKNN extends Filter {
 
         public double distanceTo(Point op) {
             return Math.sqrt(((x - op.x) * (x - op.x)) + ((y - op.y) * (y - op.y)));
+        }
+
+        public void add(Point position) {
+            this.x += position.x;
+            this.y += position.y;
+        }
+
+        public void div(double div) {
+            this.x /= div;
+            this.y /= div;
         }
     }
 

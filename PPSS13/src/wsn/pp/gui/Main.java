@@ -1,5 +1,6 @@
 package wsn.pp.gui;
 
+
 import wsn.pp.filter.LinkFilter;
 import wsn.pp.filter.LinkMeanFilter;
 import wsn.pp.filter.LinkPrinter;
@@ -10,6 +11,8 @@ import java.io.File;
 import net.tinyos.message.Message;
 import net.tinyos.message.MessageListener;
 import net.tinyos.message.MoteIF;
+import net.tinyos.message.MoteIF;
+import net.tinyos.message.MoteIF;
 import wsn.pp.data.Datasource;
 import wsn.pp.filter.Filter;
 import wsn.pp.filter.LinkATMFFilter;
@@ -19,6 +22,7 @@ import wsn.pp.filter.LinkMedianFilter;
 import wsn.pp.filter.LinkPlot;
 import wsn.pp.gui.ConfigView;
 import wsn.pp.gui.View;
+import wsn.pp.gui.view.VisualGuiControl;
 
 public class Main implements MessageListener {
 
@@ -37,11 +41,12 @@ public class Main implements MessageListener {
     
     private void addLink(int s,int d){
         Filter atmf = new LinkATMFFilter(11,0.2f, null);
-        LinkKNN knn = new LinkKNN(3, null);
+        //LinkKNN knn = new LinkKNN(3, null);
         
-        atmf.registerFilter(knn);
+        atmf.registerFilter(visualGui);
+        //atmf.registerFilter(knn);
         lf.registerLinkFilter(s, d, atmf);
-        knnc.addKNN(knn);
+        //knnc.addKNN(knn);
         
     }
     
@@ -53,17 +58,37 @@ public class Main implements MessageListener {
         
         // Configure Filters
         lf = new LinkFilter();
+        
         //lf.registerLinkFilter(2, 3, new LinkPlot("Raw"));
         
         knnc = new KNNControl();
         knnc.setVisible(true);
         Datasource loggin = new Datasource(lf,null);
+        Thread t = new Thread(visualGui = new VisualGuiControl(null,null,loggin));
+        t.start();
         
-        addLink(5, 4);
+        
+        
+        for(int i=0;i<=8;i++)
+            for(int j=0;j<=8;j++)
+                addLink(i,j);
+        /*
+        addLink(7, 6);
         addLink(1, 5);
         addLink(1, 4);
+        addLink(1, 2);
+        addLink(1, 3);
+        addLink(1, 4);
+        addLink(1, 6);
+        knnc.learn("empty");
+        loggin.playRecording(new File("naive-e"));
+        knnc.stop();
         
-        visualGui = new VisualGuiControl(lf);
+        knnc.learn("standing");
+        loggin.playRecording(new File("naive-s-a"));
+        knnc.stop();
+        
+        
         //Datasource loggin = new Datasource(lf,new File("Pentagram-e"));
 
         //cv = new ConfigView(loggin);
