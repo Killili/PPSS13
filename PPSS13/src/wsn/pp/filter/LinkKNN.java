@@ -4,17 +4,23 @@
  */
 package wsn.pp.filter;
 
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import wsn.pp.gui.GNUPlot;
+import wsn.pp.gui.KNNControl;
 
 /**
  *
@@ -27,14 +33,20 @@ public class LinkKNN extends Filter {
     private List<DataPoint> learnPackage;
     private boolean learning;
     private int k;
-    private final GNUPlot plot;
+    private GNUPlot plot;
     private int plotCounter = 0;
+    private String title = "NotSet";
+    private KNNControl knnControl;
+
+    @Override
+    public String toString() {
+        return this.title;
+    }
 
     public LinkKNN(int k, LinkInfoReciver nextFilter) {
         super(nextFilter);
         this.k = k;
         this.data = new HashMap<String, List<DataPoint>>();
-        this.plot = new GNUPlot();
     }
 
     public void learnType(String type) {
@@ -46,7 +58,10 @@ public class LinkKNN extends Filter {
 
     public void stopLearning() {
         this.learning = false;
+    }
 
+    public void setKNNControl(KNNControl c) {
+        this.knnControl = c;
     }
 
     public void forget(String type) {
@@ -61,7 +76,7 @@ public class LinkKNN extends Filter {
         List<Neighbores> list = new LinkedList<Neighbores>();
         for (String type : data.keySet()) {
             for (DataPoint other : data.get(type)) {
-                double dist = other.position.distanceTo(dp.position);
+                double dist = dp.position.distanceTo(other.position);
                 list.add(new Neighbores(other, dist));
             }
         }
@@ -88,27 +103,103 @@ public class LinkKNN extends Filter {
         }
 
 
+
         DataPoint current = new DataPoint("Current", new Point(ls.power, (Double) ls.metaData.get("StdDev")));
         List<Neighbores> neighbores = findNearestNeighbores(current);
-        
+
+        title = ls.sourceNode + "->" + ls.destinationNode;
+
+        if (neighbores.size() >= k) {
+            HashMap<String, Integer> counter = new HashMap<String, Integer>();
+            for (Neighbores nei : neighbores) {
+                if (counter.containsKey(nei.data.Type)) {
+                    int tmp = counter.get(nei.data.Type);
+                    tmp += 1;
+                    counter.put(nei.data.Type, tmp);
+                } else {
+                    counter.put(nei.data.Type, 1);
+                }
+            }
+            List<Entry<String, Integer>> hits = new ArrayList<Entry<String, Integer>>(counter.entrySet());
+            Collections.sort(hits, new Comparator<Map.Entry<String, Integer>>() {
+                @Override
+                public int compare(Entry<String, Integer> o1, Entry<String, Integer> o2) {
+                    if (o1.getValue() > o2.getValue()) {
+                        return -1;
+                    } else if (o1.getValue() < o2.getValue()) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                }
+            });
+            ls.metaData.put("KNNState", hits.get(0).getKey());
+            ls.metaData.put("KNNConfidence", counter.get(hits.get(0).getKey()));
+            title += " (" + hits.get(0).getKey() + " " + ((float) (counter.get(hits.get(0).getKey())) / (float) k) + ")";
+        }
+
         ls.metaData.put("Datapoint", current);
-        ls.metaData.put("Neighbores", neighbores );
-        
-        if( plotCounter > 50 ){
+        ls.metaData.put("Neighbores", neighbores);
+
+        if (plotCounter > 50) {
             plot(ls, neighbores);
             plotCounter = 0;
         }
         plotCounter += 1;
 
+        if (this.knnControl != null) {
+            knnControl.updateKNN(this);
+        }
 
         super.recvLinkInfo(ls);
     }
 
+    public void startPloting() {
+        if (plot == null) {
+            plot = new GNUPlot();
+            plot.addWindowListener(new WindowListener() {
+                @Override
+                public void windowOpened(WindowEvent e) {
+                }
+
+                @Override
+                public void windowClosing(WindowEvent e) {
+                    plot = null;
+                }
+
+                @Override
+                public void windowClosed(WindowEvent e) {
+                }
+
+                @Override
+                public void windowIconified(WindowEvent e) {
+                }
+
+                @Override
+                public void windowDeiconified(WindowEvent e) {
+                }
+
+                @Override
+                public void windowActivated(WindowEvent e) {
+                }
+
+                @Override
+                public void windowDeactivated(WindowEvent e) {
+                }
+            });
+        }
+    }
+
     private void plot(LinkInfo ls, List<Neighbores> neighbores) {
+        if(plot == null) return;
         try {
             String dataString = "";
-            String plotString = "set terminal png\nset title \"Connection " + ls.sourceNode + "->" + ls.destinationNode + "\"\n plot ";
+            String plotString = "set terminal png\n";
 
+            plotString += "set title \"Link " + ls.sourceNode + "->" + ls.destinationNode + "\"\n";
+
+            plotString += "set xrange [-25:15]\n set yrange [0:5]\n";
+            plotString += "plot ";
             for (String type : data.keySet()) {
                 if (data.get(type).size() > 0) {
                     plotString += "'-' title \"" + type + "\" with circles,";
@@ -170,7 +261,7 @@ public class LinkKNN extends Filter {
         }
 
         public double distanceTo(Point op) {
-            return Math.sqrt(((x - op.x) * (x - op.x)) + ((y - op.y) * (y - op.y)));
+            return Math.sqrt(((op.x - x) * (op.x - x)) + ((op.y - y) * (op.y - y)));
         }
 
         public void add(Point position) {

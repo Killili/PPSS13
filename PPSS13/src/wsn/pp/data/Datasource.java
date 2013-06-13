@@ -32,7 +32,7 @@ import wsn.pp.messages.SnoopBCMsg;
  */
 public class Datasource implements MessageListener {
 
-    public static final boolean _MACOS = true;
+    public static final boolean _MACOS = false;
     
     private MoteIF mote;
     private final LinkInfoReciver slave;
@@ -101,8 +101,8 @@ public class Datasource implements MessageListener {
         if( file == null ){
             if(_MACOS)
                 return;
-            mote = new MoteIF(PrintStreamMessenger.err);
-            //mote = new MoteIF( BuildSource.makePhoenix("sf@192.168.178.28:9002", PrintStreamMessenger.err));
+            //mote = new MoteIF(PrintStreamMessenger.err);
+            mote = new MoteIF( BuildSource.makePhoenix("sf@192.168.178.39:9002", PrintStreamMessenger.err));
             mote.registerListener(new SnoopBCMsg(), this);
         } else {
             playRecording(file);

@@ -1,0 +1,1 @@
+java -cp lib/tinyos.jar net.tinyos.sf.SerialForwarder -comm serial@COM7:telosb

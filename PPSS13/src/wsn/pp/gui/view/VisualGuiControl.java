@@ -4,7 +4,6 @@
  */
 package wsn.pp.gui.view;
 
-import com.sun.java.swing.plaf.nimbus.SliderPainter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -12,8 +11,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import processing.core.PApplet;
-import static processing.core.PConstants.P2D;
 import wsn.pp.data.Datasource;
 import wsn.pp.filter.Filter;
 import wsn.pp.filter.LinkInfo;
@@ -46,7 +43,7 @@ public class VisualGuiControl extends Filter implements LinkInfoReciver,Runnable
         
         //System.out.println("rec Link");
         VisualGuiModel.getInstance().updateRssi(ls);
-        //super.recvLinkInfo(ls);
+        super.recvLinkInfo(ls);
     }
 
     void addNode() {

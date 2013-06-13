@@ -76,7 +76,7 @@ public class ViewRender  extends PApplet{
     
     @Override
     public void draw() {
-        super.draw(); //To change body of generated methods, choose Tools | Templates.
+        //super.draw(); //To change body of generated methods, choose Tools | Templates.
         
         fill(255, 255, 255);
         rect(0, 0, 600, 600);
