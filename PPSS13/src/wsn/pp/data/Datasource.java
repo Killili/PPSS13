@@ -32,6 +32,8 @@ import wsn.pp.messages.SnoopBCMsg;
  */
 public class Datasource implements MessageListener {
 
+    public static final boolean _MACOS = false;
+    
     private MoteIF mote;
     private final LinkInfoReciver slave;
     private ObjectOutputStream out;
@@ -57,7 +59,7 @@ public class Datasource implements MessageListener {
                 while (true) {
                     p = (Packet) in.readObject();
                     this.messageReceivedWithTimestamp(p.adress, new SnoopBCMsg(p.data, 8),p.time);
-                    Thread.sleep(200);
+                    Thread.sleep(20);
                 }
             } catch (EOFException e) { // Playback done
             } catch (ClassNotFoundException ex) {
@@ -97,8 +99,10 @@ public class Datasource implements MessageListener {
     public Datasource(LinkInfoReciver slave,File file) {
         this.slave = slave;
         if( file == null ){
-            mote = new MoteIF(PrintStreamMessenger.err);
-            //mote = new MoteIF( BuildSource.makePhoenix("sf@192.168.178.28:9002", PrintStreamMessenger.err));
+            if(_MACOS)
+                return;
+            //mote = new MoteIF(PrintStreamMessenger.err);
+            mote = new MoteIF( BuildSource.makePhoenix("sf@192.168.178.39:9002", PrintStreamMessenger.err));
             mote.registerListener(new SnoopBCMsg(), this);
         } else {
             playRecording(file);

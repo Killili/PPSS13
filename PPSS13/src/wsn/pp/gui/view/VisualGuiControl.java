@@ -4,15 +4,14 @@
  */
 package wsn.pp.gui.view;
 
-import com.sun.java.swing.plaf.nimbus.SliderPainter;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import processing.core.PApplet;
-import static processing.core.PConstants.P2D;
+import wsn.pp.data.Datasource;
 import wsn.pp.filter.Filter;
 import wsn.pp.filter.LinkInfo;
 import wsn.pp.filter.LinkInfoReciver;
@@ -25,33 +24,35 @@ public class VisualGuiControl extends Filter implements LinkInfoReciver,Runnable
     
     ViewRender panel;
     VisualGui view;
-    VisualGuiModel m;
+    Datasource loggin;
+    private String store;
     
-    public VisualGuiControl(LinkInfoReciver lir,String file)
+    public VisualGuiControl(LinkInfoReciver lir,String file, Datasource loggin)
     {
         super(lir);
+        this.loggin = loggin;
         if(file!=null)
             loadFile(file);
         
         
     }
 
+
     @Override
     public void recvLinkInfo(LinkInfo ls) {
         
         //System.out.println("rec Link");
-        m.updateRssi(ls);
-        //super.recvLinkInfo(ls);
+        VisualGuiModel.getInstance().updateRssi(ls);
+        super.recvLinkInfo(ls);
     }
 
     void addNode() {
-        m.nodes.add(new SensorNode((int)(Math.random()*500),50,m.nodes.size()));
+        VisualGuiModel.getInstance().nodes.add(new SensorNode((int)(Math.random()*500),50,VisualGuiModel.getInstance().nodes.size()));
     }
 
     @Override
     public void run() {
-        if(m== null)
-            m = new VisualGuiModel();
+        
         view = new VisualGui(this);
    
         
@@ -65,7 +66,7 @@ public class VisualGuiControl extends Filter implements LinkInfoReciver,Runnable
                 panel = new ViewRender(control);
                 panel.init();
         
-                panel.setModel(m);
+                
                 view.getRenderPanel().add(panel);
                 while(true){
                 panel.start();
@@ -90,8 +91,8 @@ public class VisualGuiControl extends Filter implements LinkInfoReciver,Runnable
         {
         FileInputStream fileOut = new FileInputStream(name);
         ObjectInputStream in = new ObjectInputStream(fileOut);
-        m = (VisualGuiModel) in.readObject();
-        
+        VisualGuiModel.setInstance((VisualGuiModel) in.readObject());
+            System.out.println("Loaded "+VisualGuiModel.getInstance().nodes.size()+" points");
         }
         catch(Exception e)
         {
@@ -106,12 +107,45 @@ public class VisualGuiControl extends Filter implements LinkInfoReciver,Runnable
         {
         FileOutputStream fileOut = new FileOutputStream(name);
         ObjectOutputStream out = new ObjectOutputStream(fileOut);
-        out.writeObject(m);
+        out.writeObject(VisualGuiModel.getInstance());
         }
         catch(Exception e)
         {
             System.err.println(e);
         }
+    }
+
+    void playFile(String text) {
+        store = text;
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                loggin.playRecording(new File(store));
+            }
+        });
+        t.start();
+        
+        
+    }
+
+    void setVisibleParts(boolean heat, boolean lines, boolean values) {
+        panel.setVisibleParts(heat,lines,values);
+    }
+
+    void setSpread(String text) {
+        VisualGuiModel.getInstance().spreadRate = Double.parseDouble(text);
+    }
+
+    void setCooling(String text) {
+        VisualGuiModel.getInstance().coolingRate = Double.parseDouble(text);
+    }
+
+    void setHeat(String text) {
+        VisualGuiModel.getInstance().heatMultiplay =  Double.parseDouble(text);
+    }
+
+    void setRange(String text) {
+        VisualGuiModel.getInstance().range =  Double.parseDouble(text);
     }
     
     

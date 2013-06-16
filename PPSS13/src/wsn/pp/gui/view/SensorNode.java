@@ -7,6 +7,7 @@ package wsn.pp.gui.view;
 import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.io.Serializable;
+import java.util.AbstractMap;
 import java.util.LinkedList;
 import java.util.Map;
 
@@ -19,7 +20,7 @@ public class SensorNode implements Serializable{
     public int id;
     public double[] nodeRSSI;
     public Long timeout;
-    private LinkedList<Map<String, Object>> metaData;
+    transient private LinkedList<Map<String, Object>> metaData;
     
     SensorNode(int x, int y, int id) {
         position = new Point(x,y);
@@ -46,13 +47,23 @@ public class SensorNode implements Serializable{
 
     Map<String, Object> getMetadata(int dest)
     {
-       
+        checkMeta();
         return this.metaData.get(dest+1);
     }
     
     void setMetadata(int dest,Map<String, Object> metaData) {
+       checkMeta();
         
         this.metaData.set(dest, metaData);
         
+    }
+    
+    private void checkMeta()
+    {
+        if(this.metaData==null)
+        {metaData = new LinkedList<Map<String, Object>>();
+        for(int i=0;i<100;i++)
+            metaData.add(null);
+        }
     }
 }

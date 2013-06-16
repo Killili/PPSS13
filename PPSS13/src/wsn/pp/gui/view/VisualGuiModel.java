@@ -17,10 +17,36 @@ import wsn.pp.filter.LinkInfo;
  * @author wcu
  */
 public class VisualGuiModel implements Serializable{
+
+    public static VisualGuiModel m=null;
     LinkedList<SensorNode> nodes;
     private int updateTime = 100;
-    public VisualGuiModel() {
+    
+    //For heat maps
+    public double coolingRate = 0.2;
+    public double heatMultiplay =0.5;
+    public double spreadRate = 0.1;
+    public double range = 2;
+    
+    
+    static void setInstance(VisualGuiModel visualGuiModel) {
+        m = visualGuiModel;
+    }
+    
+    public static VisualGuiModel getInstance()
+    {
+        if (m==null)
+            m = new VisualGuiModel();
+        return m;
+    }
+    
+    
+    
+    
+    
+    private VisualGuiModel() {
         nodes  = new LinkedList<SensorNode>();
+        m = this;
     }
 
     //Getter and Setter

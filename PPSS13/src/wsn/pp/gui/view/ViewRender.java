@@ -18,21 +18,17 @@ import static processing.core.PConstants.P2D;
 public class ViewRender  extends PApplet{
 
     VisualGuiControl control;
-    VisualGuiModel model;
     private SensorNode selectedNode;
     private double[][] heatMap;
+    private boolean heat;
+    private boolean lines;
+    private boolean values;
     
     public ViewRender(VisualGuiControl cont) {
         control = cont;
         heatMap = new double[600][600];
     }
     
-
-    
-    public void setModel(VisualGuiModel v)
-    {
-        model = v;
-    }
 
     @Override
     public void setup() {
@@ -70,11 +66,17 @@ public class ViewRender  extends PApplet{
        
     }
 
-    
+     void setVisibleParts(boolean heat, boolean lines, boolean values) 
+     {
+         this.heat = heat;
+         this.lines = lines;
+         this.values = values;
+    }
+  
     
     @Override
     public void draw() {
-        super.draw(); //To change body of generated methods, choose Tools | Templates.
+        //super.draw(); //To change body of generated methods, choose Tools | Templates.
         
         fill(255, 255, 255);
         rect(0, 0, 600, 600);
@@ -82,9 +84,12 @@ public class ViewRender  extends PApplet{
         //System.out.println("draw");
         calcHeatmap();
         
+        VisualGuiModel model = VisualGuiModel.getInstance();
         if(model==null)
             return;
         
+        //System.out.println("try to draw "+model.nodes.size()+" points");
+        if(heat)
         for(int x=0;x<heatMap.length;x++)
             for(int y=0;y<heatMap[0].length;y++)
             {
@@ -118,6 +123,7 @@ public class ViewRender  extends PApplet{
                 if(node1.getRssi(node2.id)==0)
                     continue;
                 //System.out.println(node1.getMetadata(node2.id));
+                
                 if(node1.getMetadata(node2.id)!=null && node1.getMetadata(node2.id).get("StdDev")!=null)
                 {
                     strokeWeight(3);
@@ -127,9 +133,11 @@ public class ViewRender  extends PApplet{
                 {
                     stroke(231,15,85);
                 }
-                line((int)node1.position.x, (int)node1.position.y, (int)node2.position.x, (int)node2.position.y);
+                if(lines)
+                    line((int)node1.position.x, (int)node1.position.y, (int)node2.position.x, (int)node2.position.y);
                 Point mid = getMid(node1.position, node2.position);
-                text("r:"+(((double)Math.round(node1.getRssi(node2.id)*100))/100), mid.x, mid.y);
+                if(values)
+                    text("r:"+(((double)Math.round(node1.getRssi(node2.id)*100))/100), mid.x, mid.y);
                 stroke(231,15,85);
             }
         }
@@ -138,11 +146,14 @@ public class ViewRender  extends PApplet{
     
     private void calcHeatmap()
     {
-        double coolingRate = 0.2;
-        double heatMultiplay =0.5;
-        double spreadRate = 0.1;
-        int range = 2;
+        VisualGuiModel model = VisualGuiModel.getInstance();
+        double coolingRate = model.coolingRate;
+        double heatMultiplay =model.heatMultiplay;
+        double spreadRate = model.spreadRate;
+        double range = model.range;
       
+        
+        
         for(Object nod:model.getNodes().toArray())
         {
            
@@ -161,12 +172,13 @@ public class ViewRender  extends PApplet{
                     strokeWeight(3);
                     double d =((Double)(node1.getMetadata(node2.id).get("StdDev"))*10);
                     heatPath(heatMap, node1.position, node2.position,(int)(d*heatMultiplay));
+                    //heatMiddel(heatMap, node1.position, node2.position,(int)(d*heatMultiplay));
                 }
             }
         }
         
         coolMap(heatMap, coolingRate);
-        heatMap =spreadheat(heatMap, spreadRate, range);
+        heatMap =spreadheat(heatMap, spreadRate, (int)range);
         
     }
     
@@ -197,6 +209,14 @@ public class ViewRender  extends PApplet{
         return x>=0 && y>=0&& map.length>x && map[0].length>y;
     }
     
+    private void heatMiddel(double[][] map,Point a, Point b,int heat)
+    {
+       double pathLenght = a.distance(b),rest = pathLenght;
+       Point mid = getMid(a, b);
+       map[mid.x][mid.y] = Math.max(heat,map[mid.x][mid.y]);
+       
+    }
+    
     private void heatPath(double[][] map,Point a, Point b,int heat)
     {
         double pathLenght = a.distance(b),rest = pathLenght;
@@ -208,7 +228,8 @@ public class ViewRender  extends PApplet{
         while(rest >0)
         {
             //System.out.println("Heat "+(a.x+xPath*(rest/pathLenght))+":"+((a.y+yPath*(rest/pathLenght)))+" -> "+heat);
-            map[(int)(a.x+xPath*(rest/pathLenght))][(int)(a.y+yPath*(rest/pathLenght))] = Math.max(heat,map[(int)(a.x+xPath*(rest/pathLenght))][(int)(a.y+yPath*(rest/pathLenght))]);
+            //map[(int)(a.x+xPath*(rest/pathLenght))][(int)(a.y+yPath*(rest/pathLenght))] = Math.max(heat,map[(int)(a.x+xPath*(rest/pathLenght))][(int)(a.y+yPath*(rest/pathLenght))]);
+            map[(int)(a.x+xPath*(rest/pathLenght))][(int)(a.y+yPath*(rest/pathLenght))] += heat;
             rest--;
         }
     }
@@ -232,6 +253,9 @@ public class ViewRender  extends PApplet{
     {
         SensorNode node = null;
         double maxDist = 10;
+        
+        VisualGuiModel model = VisualGuiModel.getInstance();
+        
         for(Object nod:model.getNodes().toArray())
         {
             SensorNode n = (SensorNode) nod;
@@ -249,4 +273,5 @@ public class ViewRender  extends PApplet{
         result.translate((b.x - a.x) / 2, (b.y - a.y) / 2);
         return result;
     }
+
 }
