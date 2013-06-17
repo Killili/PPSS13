@@ -64,12 +64,12 @@ public class VisualGuiControl extends Filter implements LinkInfoReciver,Runnable
             @Override
             public void run() {
                 panel = new ViewRender(control);
-                panel.init();
+                
         
                 
                 view.getRenderPanel().add(panel);
                 while(true){
-                panel.start();
+                panel.repaint();
                 try {
                     Thread.sleep(200);
                 } catch (InterruptedException ex) {

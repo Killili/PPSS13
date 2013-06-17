@@ -194,17 +194,12 @@ public class LinkKNN extends Filter {
         super.recvLinkInfo(ls);
     }
 
-    private void plot(LinkInfo ls, List<Neighbores> neighbores) {
-        try {
-            String dataString = "";
-            String plotString = "set terminal png\nset title \"Connection " + ls.sourceNode + "->" + ls.destinationNode + "\"\n plot ";
-=======
+
     private void plot(LinkInfo ls, List<Neighbores> neighbores) {
         if(plot == null) return;
         try {
             String dataString = "";
             String plotString = "set terminal png\n";
->>>>>>> refs/heads/Merge
 
             plotString += "set title \"Link " + ls.sourceNode + "->" + ls.destinationNode + "\"\n";
 
@@ -284,15 +279,6 @@ public class LinkKNN extends Filter {
             this.y /= div;
         }
 
-        public void add(Point position) {
-            this.x += position.x;
-            this.y += position.y;
-        }
-
-        public void div(double div) {
-            this.x /= div;
-            this.y /= div;
-        }
     }
 
     private static class Neighbores implements Comparable<Neighbores> {

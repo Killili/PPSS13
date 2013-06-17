@@ -308,7 +308,7 @@ public class KNNControl extends javax.swing.JFrame implements LinkInfoReciver {
     // End of variables declaration//GEN-END:variables
 
     public void updateKNN(LinkKNN aThis) {
-        DefaultListModel<LinkKNN> dlm = (DefaultListModel<LinkKNN>) lstEstimate.getModel();
+        DefaultListModel dlm = (DefaultListModel) lstEstimate.getModel();
         dlm.set(dlm.indexOf(aThis), aThis);
         
     }

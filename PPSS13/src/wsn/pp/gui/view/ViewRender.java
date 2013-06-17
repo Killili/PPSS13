@@ -4,18 +4,26 @@
  */
 package wsn.pp.gui.view;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Event;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.Stroke;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.LinkedList;
-import processing.core.PApplet;
-import static processing.core.PConstants.P2D;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JPanel;
+
 
 /**
  *
  * @author wcu
  */
-public class ViewRender  extends PApplet{
+public class ViewRender  extends JPanel implements MouseListener{
 
     VisualGuiControl control;
     private SensorNode selectedNode;
@@ -27,60 +35,30 @@ public class ViewRender  extends PApplet{
     public ViewRender(VisualGuiControl cont) {
         control = cont;
         heatMap = new double[600][600];
+        setup();
     }
     
 
-    @Override
+    
     public void setup() {
-        super.setup();
-        size(600, 600, P2D);
+        this.setSize(600, 600);
     }
-
-    @Override
-    public boolean mouseUp(Event event, int x, int y) {
-        if(selectedNode!=null)
-            selectedNode.position.setLocation(x, y);
-        return true;
-    }
-
-    @Override
-    public void mouseReleased() {
-        if(selectedNode!=null)
-            selectedNode.position.setLocation(mouseX, mouseY);
-        selectedNode =null;
-        
-    }
-
     
-    
-    @Override
-    public void mousePressed() {
-        super.mousePressed(); 
-        System.out.println("click "+mouseX+":"+mouseY);
-        SensorNode node = getClickedNode(mouseX, mouseY);
-        
-        if(node!=null)
-        {
-            selectedNode = node;
-        }
-       
-    }
-
-     void setVisibleParts(boolean heat, boolean lines, boolean values) 
+    void setVisibleParts(boolean heat, boolean lines, boolean values) 
      {
          this.heat = heat;
          this.lines = lines;
          this.values = values;
     }
-  
-    
+
+     
     @Override
-    public void draw() {
-        //super.draw(); //To change body of generated methods, choose Tools | Templates.
-        
-        fill(255, 255, 255);
-        rect(0, 0, 600, 600);
-       fill(2, 25, 55);
+    public void paint(Graphics grphcs) {
+        super.paint(grphcs); //To change body of generated methods, choose Tools | Templates.
+        Graphics2D g = (Graphics2D) grphcs;
+        g.setColor(new Color(255, 255, 255));
+        g.fillRect(0, 0, 600, 600);
+       g.setColor(new Color(2, 25, 55));
         //System.out.println("draw");
         calcHeatmap();
         
@@ -96,18 +74,18 @@ public class ViewRender  extends PApplet{
                 if(heatMap[x][y]<2)
                     continue;
                 //System.out.println("h"+heatMap[x][y]);
-                stroke((int)(heatMap[x][y]*25),23,255-(int)(heatMap[x][y]*25));
-                rect(x, y, 1, 1);
+                g.setStroke(new BasicStroke((int)(heatMap[x][y]*25),23,255-(int)(heatMap[x][y]*25)));
+                g.fillRect(x, y, 1, 1);
             }
         
         for(Object nod:model.getNodes().toArray())
         {
-            fill(2, 25, 55);
+            g.setColor(new Color(2, 25, 55));
             SensorNode node = (SensorNode) nod;
-            ellipse((int)node.position.x,(int)node.position.y, 10, 10);
+            g.fillOval((int)node.position.x,(int)node.position.y, 10, 10);
             
-            fill(24, 215, 55);
-            text(""+node.id, (int)node.position.x+7,(int)node.position.y+7);
+            g.setColor(new Color(24, 215, 55));
+            g.drawString(""+node.id, (int)node.position.x+7,(int)node.position.y+7);
         }
         
         for(Object nod:model.getNodes().toArray())
@@ -126,19 +104,19 @@ public class ViewRender  extends PApplet{
                 
                 if(node1.getMetadata(node2.id)!=null && node1.getMetadata(node2.id).get("StdDev")!=null)
                 {
-                    strokeWeight(3);
-                    stroke((float) ((Double)(node1.getMetadata(node2.id).get("StdDev"))*10),12,12);
+                    g.setStroke(new BasicStroke(3));
+                    g.setColor(new Color((float) ((Double)(node1.getMetadata(node2.id).get("StdDev"))*10),12,12));
                 }
                 else
                 {
-                    stroke(231,15,85);
+                    g.setColor(new Color(231,15,85));
                 }
                 if(lines)
-                    line((int)node1.position.x, (int)node1.position.y, (int)node2.position.x, (int)node2.position.y);
+                    g.drawLine((int)node1.position.x, (int)node1.position.y, (int)node2.position.x, (int)node2.position.y);
                 Point mid = getMid(node1.position, node2.position);
                 if(values)
-                    text("r:"+(((double)Math.round(node1.getRssi(node2.id)*100))/100), mid.x, mid.y);
-                stroke(231,15,85);
+                    g.drawString("r:"+(((double)Math.round(node1.getRssi(node2.id)*100))/100), mid.x, mid.y);
+                g.setColor(new Color(231,15,85));
             }
         }
         
@@ -169,7 +147,7 @@ public class ViewRender  extends PApplet{
                 
                 if(node1.getMetadata(node2.id)!=null && node1.getMetadata(node2.id).get("StdDev")!=null)
                 {
-                    strokeWeight(3);
+                     //g.setStroke(new BasicStroke(3));
                     double d =((Double)(node1.getMetadata(node2.id).get("StdDev"))*10);
                     heatPath(heatMap, node1.position, node2.position,(int)(d*heatMultiplay));
                     //heatMiddel(heatMap, node1.position, node2.position,(int)(d*heatMultiplay));
@@ -273,5 +251,39 @@ public class ViewRender  extends PApplet{
         result.translate((b.x - a.x) / 2, (b.y - a.y) / 2);
         return result;
     }
+
+    @Override
+    public void mouseClicked(MouseEvent me) {
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void mousePressed(MouseEvent me) {
+            System.out.println("click "+me.getX()+":"+me.getY());
+        SensorNode node = getClickedNode(me.getX(), me.getY());
+        
+        if(node!=null)
+        {
+            selectedNode = node;
+        }
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent me) {
+            if(selectedNode!=null)
+            selectedNode.position.setLocation(me.getX(), me.getY());
+  
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent me) {
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void mouseExited(MouseEvent me) {
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
 
 }
