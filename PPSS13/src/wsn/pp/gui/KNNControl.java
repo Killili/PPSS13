@@ -81,6 +81,7 @@ public class KNNControl extends javax.swing.JFrame implements LinkInfoReciver {
         btnPlayback = new javax.swing.JButton();
         txtFile = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
+        btnPlay = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         lstEstimate = new javax.swing.JList();
@@ -144,6 +145,13 @@ public class KNNControl extends javax.swing.JFrame implements LinkInfoReciver {
 
         jLabel5.setText("Filename");
 
+        btnPlay.setText("Just playback");
+        btnPlay.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPlayActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -163,7 +171,8 @@ public class KNNControl extends javax.swing.JFrame implements LinkInfoReciver {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel5)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtFile)))
+                        .addComponent(txtFile))
+                    .addComponent(btnPlay, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -177,6 +186,8 @@ public class KNNControl extends javax.swing.JFrame implements LinkInfoReciver {
                 .addComponent(btnPlayback)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnRecord)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnPlay)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnForget)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -240,7 +251,7 @@ public class KNNControl extends javax.swing.JFrame implements LinkInfoReciver {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 278, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 307, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnRaw)
@@ -269,7 +280,7 @@ public class KNNControl extends javax.swing.JFrame implements LinkInfoReciver {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGap(150, 150, 150)
                 .addComponent(lblStatus)
-                .addContainerGap(121, Short.MAX_VALUE))
+                .addContainerGap(150, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Overview", jPanel3);
@@ -323,7 +334,7 @@ public class KNNControl extends javax.swing.JFrame implements LinkInfoReciver {
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
                     .addComponent(jSpinner1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(252, Short.MAX_VALUE))
+                .addContainerGap(281, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Options", jPanel4);
@@ -430,11 +441,17 @@ public class KNNControl extends javax.swing.JFrame implements LinkInfoReciver {
         }
     }//GEN-LAST:event_btnPlaybackActionPerformed
 
+    private void btnPlayActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPlayActionPerformed
+        File file = new File( "data/" + txtFile.getText() );
+        Datasource.getInstance().playRecording(file);
+    }//GEN-LAST:event_btnPlayActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnATMF;
     private javax.swing.JButton btnForget;
     private javax.swing.JButton btnKNN;
     private javax.swing.JButton btnLearn;
+    private javax.swing.JButton btnPlay;
     private javax.swing.JButton btnPlayback;
     private javax.swing.JButton btnRaw;
     private javax.swing.JButton btnRecord;

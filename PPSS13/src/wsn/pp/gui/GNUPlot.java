@@ -112,7 +112,9 @@ public class GNUPlot extends JFrame implements MouseListener {
     @Override
     public void mouseClicked(MouseEvent e) {
         Clipboard clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
-        clpbrd.setContents(new StringSelection(lastPlot), null);
+        String data = lastPlot.replaceAll( "(?i)\\bset terminal png\\b" , "" ); 
+        data = data.replaceAll( "(?i)\\bquit\\b" , "" ); 
+        clpbrd.setContents(new StringSelection(data), null);
     }
 
     @Override
