@@ -4,6 +4,8 @@
  */
 package wsn.pp.gui;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -13,8 +15,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.AbstractListModel;
 import javax.swing.DefaultListModel;
+import wsn.pp.data.Datasource;
 import wsn.pp.filter.LinkATMFFilter;
 import wsn.pp.filter.LinkFilter;
 import wsn.pp.filter.LinkInfo;
@@ -70,6 +75,12 @@ public class KNNControl extends javax.swing.JFrame implements LinkInfoReciver {
         lstTypes = new javax.swing.JList();
         btnLearn = new javax.swing.JButton();
         btnForget = new javax.swing.JButton();
+        txtPattern = new javax.swing.JTextField();
+        btnRecord = new javax.swing.JButton();
+        jLabel4 = new javax.swing.JLabel();
+        btnPlayback = new javax.swing.JButton();
+        txtFile = new javax.swing.JTextField();
+        jLabel5 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         lstEstimate = new javax.swing.JList();
@@ -88,9 +99,14 @@ public class KNNControl extends javax.swing.JFrame implements LinkInfoReciver {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         lstTypes.setModel(new javax.swing.AbstractListModel() {
-            String[] strings = { "Empty", "Standing", "Moving" };
+            String[] strings = { "Empty", "Standing-1", "Standing-2", "Standing-3", "Moving" };
             public int getSize() { return strings.length; }
             public Object getElementAt(int i) { return strings[i]; }
+        });
+        lstTypes.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                lstTypesValueChanged(evt);
+            }
         });
         jScrollPane1.setViewportView(lstTypes);
 
@@ -108,6 +124,26 @@ public class KNNControl extends javax.swing.JFrame implements LinkInfoReciver {
             }
         });
 
+        txtPattern.setText("Test");
+
+        btnRecord.setText("Learn and Save to File");
+        btnRecord.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRecordActionPerformed(evt);
+            }
+        });
+
+        jLabel4.setText("Pattern Name");
+
+        btnPlayback.setText("Learn from File");
+        btnPlayback.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPlaybackActionPerformed(evt);
+            }
+        });
+
+        jLabel5.setText("Filename");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -115,9 +151,19 @@ public class KNNControl extends javax.swing.JFrame implements LinkInfoReciver {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnForget, javax.swing.GroupLayout.DEFAULT_SIZE, 474, Short.MAX_VALUE)
+                    .addComponent(btnForget, javax.swing.GroupLayout.DEFAULT_SIZE, 410, Short.MAX_VALUE)
                     .addComponent(jScrollPane1)
-                    .addComponent(btnLearn, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(btnLearn, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnPlayback, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnRecord, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel4)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtPattern, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel5)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtFile)))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -128,8 +174,18 @@ public class KNNControl extends javax.swing.JFrame implements LinkInfoReciver {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnLearn)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnPlayback)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnRecord)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnForget)
-                .addContainerGap(143, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtFile, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtPattern, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel4)
+                    .addComponent(jLabel5))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Learning", jPanel1);
@@ -177,14 +233,14 @@ public class KNNControl extends javax.swing.JFrame implements LinkInfoReciver {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnKNN)
                         .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 479, Short.MAX_VALUE))
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 415, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 326, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 278, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnRaw)
@@ -205,7 +261,7 @@ public class KNNControl extends javax.swing.JFrame implements LinkInfoReciver {
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(lblStatus, javax.swing.GroupLayout.DEFAULT_SIZE, 474, Short.MAX_VALUE)
+                .addComponent(lblStatus, javax.swing.GroupLayout.DEFAULT_SIZE, 410, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
@@ -213,7 +269,7 @@ public class KNNControl extends javax.swing.JFrame implements LinkInfoReciver {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGap(150, 150, 150)
                 .addComponent(lblStatus)
-                .addContainerGap(169, Short.MAX_VALUE))
+                .addContainerGap(121, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Overview", jPanel3);
@@ -252,7 +308,7 @@ public class KNNControl extends javax.swing.JFrame implements LinkInfoReciver {
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jSpinner2, javax.swing.GroupLayout.DEFAULT_SIZE, 66, Short.MAX_VALUE)
                     .addComponent(jSpinner1))
-                .addContainerGap(368, Short.MAX_VALUE))
+                .addContainerGap(304, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -267,7 +323,7 @@ public class KNNControl extends javax.swing.JFrame implements LinkInfoReciver {
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
                     .addComponent(jSpinner1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(300, Short.MAX_VALUE))
+                .addContainerGap(252, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Options", jPanel4);
@@ -293,19 +349,10 @@ public class KNNControl extends javax.swing.JFrame implements LinkInfoReciver {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnLearnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLearnActionPerformed
-        if (lstTypes.getSelectedIndex() < 0) {
-            return;
-        }
-        if (btnLearn.getText().equals("Learn")) {
-            for (LinkKNN knn : knns) {
-                knn.learnType((String) lstTypes.getSelectedValue());
-            }
-            btnLearn.setText("Stop");
-        } else {
-            for (LinkKNN knn : knns) {
-                knn.stopLearning();
-            }
-            btnLearn.setText("Learn");
+        try {
+            learn(false);
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(KNNControl.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_btnLearnActionPerformed
 
@@ -358,15 +405,44 @@ public class KNNControl extends javax.swing.JFrame implements LinkInfoReciver {
         LinkPlot.maxy = (Integer)jSpinner1.getValue();
     }//GEN-LAST:event_jSpinner1StateChanged
 
+    private void lstTypesValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_lstTypesValueChanged
+        txtFile.setText(txtPattern.getText() + "-" + lstTypes.getSelectedValue() + ".dat");
+    }//GEN-LAST:event_lstTypesValueChanged
+
+    private void btnRecordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRecordActionPerformed
+        try {
+            learn(true);
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(KNNControl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_btnRecordActionPerformed
+
+    private void btnPlaybackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPlaybackActionPerformed
+        File file = new File( "data/" + txtFile.getText() );
+        if( file.exists() ){
+            for (LinkKNN knn : knns) {
+                knn.learnType((String) lstTypes.getSelectedValue());
+            }
+            Datasource.getInstance().playRecording(file);
+            for (LinkKNN knn : knns) {
+                knn.stopLearning();
+            }
+        }
+    }//GEN-LAST:event_btnPlaybackActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnATMF;
     private javax.swing.JButton btnForget;
     private javax.swing.JButton btnKNN;
     private javax.swing.JButton btnLearn;
+    private javax.swing.JButton btnPlayback;
     private javax.swing.JButton btnRaw;
+    private javax.swing.JButton btnRecord;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
@@ -379,6 +455,8 @@ public class KNNControl extends javax.swing.JFrame implements LinkInfoReciver {
     private javax.swing.JLabel lblStatus;
     private javax.swing.JList lstEstimate;
     private javax.swing.JList lstTypes;
+    private javax.swing.JTextField txtFile;
+    private javax.swing.JTextField txtPattern;
     // End of variables declaration//GEN-END:variables
 
     public void updateKNN(LinkKNN aThis) {
@@ -420,5 +498,32 @@ public class KNNControl extends javax.swing.JFrame implements LinkInfoReciver {
             lblStatus.setText( hits.get(0).getKey() + " " + ((float) (counter.get(hits.get(0).getKey())) / (float) knns.size()) );
             data.removeLast();
         }
+    }
+
+    private boolean learn(boolean record) throws FileNotFoundException {
+        File file = new File( "data/" + txtFile.getText() );
+        if (lstTypes.getSelectedIndex() < 0) {
+            return true;
+        }
+        if (btnLearn.getText().equals("Learn")) {
+            for (LinkKNN knn : knns) {
+                knn.learnType((String) lstTypes.getSelectedValue());
+            }
+            if(record){
+                Datasource.getInstance().startRecording(file);
+            }
+            btnLearn.setText("Stop");
+            btnPlayback.setEnabled(false);
+            btnRecord.setEnabled(false);
+        } else {
+            for (LinkKNN knn : knns) {
+                knn.stopLearning();
+            }
+            Datasource.getInstance().stopRecording();
+            btnLearn.setText("Learn");
+            btnPlayback.setEnabled(true);
+            btnRecord.setEnabled(true);
+        }
+        return false;
     }
 }

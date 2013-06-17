@@ -1,6 +1,5 @@
 package wsn.pp.data;
 
-
 import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
@@ -33,12 +32,17 @@ import wsn.pp.messages.SnoopBCMsg;
 public class Datasource implements MessageListener {
 
     public static final boolean _MACOS = false;
-    
     private MoteIF mote;
     private final LinkInfoReciver slave;
     private ObjectOutputStream out;
     private FileOutputStream fileOut;
     private long startTime;
+    private static Datasource _instance;
+
+    public static Datasource getInstance() {
+        return _instance;
+    }
+    private boolean liveData = true;
 
     public void startRecording(File file) throws FileNotFoundException {
         try {
@@ -53,23 +57,21 @@ public class Datasource implements MessageListener {
     public void playRecording(File file) {
         if (slave != null) {
             try {
+                liveData = false;
                 FileInputStream fis = new FileInputStream(file);
                 ObjectInputStream in = new ObjectInputStream(fis);
                 Packet p = null;
                 while (true) {
                     p = (Packet) in.readObject();
-                    this.messageReceivedWithTimestamp(p.adress, new SnoopBCMsg(p.data, 8),p.time);
-                    Thread.sleep(20);
+                    this.messageReceivedWithTimestamp(p.adress, new SnoopBCMsg(p.data, 8), p.time);
                 }
             } catch (EOFException e) { // Playback done
             } catch (ClassNotFoundException ex) {
                 Logger.getLogger(Datasource.class.getName()).log(Level.SEVERE, null, ex);
             } catch (IOException e) {
                 e.printStackTrace();
-            } catch (InterruptedException ex) {
-                Logger.getLogger(Datasource.class.getName()).log(Level.SEVERE, null, ex);
             }
-
+            liveData = true;
         }
     }
 
@@ -85,6 +87,7 @@ public class Datasource implements MessageListener {
     }
 
     public void stopRecording() {
+        if(out == null ) return;
         try {
             synchronized (out) {
                 out.close();
@@ -96,13 +99,15 @@ public class Datasource implements MessageListener {
         }
     }
 
-    public Datasource(LinkInfoReciver slave,File file) {
+    public Datasource(LinkInfoReciver slave, File file) {
         this.slave = slave;
-        if( file == null ){
-            if(_MACOS)
+        _instance = this;
+        if (file == null) {
+            if (_MACOS) {
                 return;
+            }
             //mote = new MoteIF(PrintStreamMessenger.err);
-            mote = new MoteIF( BuildSource.makePhoenix("sf@192.168.178.39:9002", PrintStreamMessenger.err));
+            mote = new MoteIF(BuildSource.makePhoenix("sf@192.168.178.39:9002", PrintStreamMessenger.err));
             mote.registerListener(new SnoopBCMsg(), this);
         } else {
             playRecording(file);
@@ -120,15 +125,17 @@ public class Datasource implements MessageListener {
 
     @Override
     public synchronized void messageReceived(int node, Message msg) {
-        messageReceivedWithTimestamp(node, msg, System.nanoTime());
+        if (liveData) {
+            messageReceivedWithTimestamp(node, msg, System.nanoTime());
+        }
     }
-    
-    private synchronized void messageReceivedWithTimestamp(int node, Message msg,long timestamp) {
+
+    private synchronized void messageReceivedWithTimestamp(int node, Message msg, long timestamp) {
         if (slave != null && msg instanceof SnoopBCMsg) {
             SnoopBCMsg sm = (SnoopBCMsg) msg;
             //Logger.getLogger(Datasource.class.getName()).log(Level.INFO, String.format("Msg from %d", sm.get_nodeid()));
             for (int i = 0; i < 10; i++) {
-                slave.recvLinkInfo(new LinkInfo(i+1, sm.get_nodeid(), sm.get_othernodes()[i],timestamp));
+                slave.recvLinkInfo(new LinkInfo(i + 1, sm.get_nodeid(), sm.get_othernodes()[i], timestamp));
             }
         }
         if (out != null && msg instanceof SnoopBCMsg) {

@@ -53,7 +53,7 @@ public class Main implements MessageListener {
         //Thread t = new Thread(visualGui = new VisualGuiControl(null, null, loggin));
         //t.start();
 
-        int[] motes = {4,1,5,2};
+        int[] motes = {1,3,4,5};
 
         for (int i : motes) {
             loggin.sendConfig(i,50, 31);
@@ -61,7 +61,7 @@ public class Main implements MessageListener {
                 if (i != j) {
                     addLink(i, j);
                 }
-            } 
+            }
         }
  
         /*
