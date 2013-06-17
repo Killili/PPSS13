@@ -31,7 +31,7 @@ import wsn.pp.messages.SnoopBCMsg;
  */
 public class Datasource implements MessageListener {
 
-    public static final boolean _MACOS = false;
+    public static final boolean _MACOS = true;
     private MoteIF mote;
     private final LinkInfoReciver slave;
     private ObjectOutputStream out;
@@ -80,6 +80,7 @@ public class Datasource implements MessageListener {
             ConfigMsg msg = new ConfigMsg();
             msg.set_interval(interval);
             msg.set_signalStrength((byte) level);
+            if(!_MACOS)
             mote.send(node, msg);
         } catch (IOException ex) {
             Logger.getLogger(Datasource.class.getName()).log(Level.SEVERE, null, ex);
