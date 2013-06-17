@@ -189,9 +189,6 @@ public class LinkKNN extends Filter {
             });
         }
         plotCounter += 1;
-
-
-        super.recvLinkInfo(ls);
     }
 
 

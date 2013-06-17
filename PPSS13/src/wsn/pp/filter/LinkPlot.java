@@ -21,6 +21,8 @@ public class LinkPlot extends Filter {
     private final List<LinkInfo> data;
     private final GNUPlot plot;
     private final String title;
+    public static int miny = -20;
+    public static int maxy = 20;
 
     public LinkPlot(String title, LinkInfoReciver lsr) {
         super(lsr);
@@ -41,7 +43,7 @@ public class LinkPlot extends Filter {
             for (LinkInfo i : data) {
                 dataString += i.timestamp + " " + i.power + "\n";
             }
-            plot.plot("set terminal png\n plot '-' title \"" + this.title + "( " + ls.sourceNode + " -> " + ls.destinationNode + " )\" with linespoints\n" + dataString + "e\nquit\n");
+            plot.plot("set terminal png\n set yrange ["+ maxy + ":" + miny +"] \n plot '-' title \"" + this.title + "( " + ls.sourceNode + " -> " + ls.destinationNode + " )\" with linespoints\n" + dataString + "e\nquit\n");
 
 
         } catch (InterruptedException ex) {

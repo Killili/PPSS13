@@ -20,19 +20,23 @@ public class LinkFilter implements LinkInfoReciver {
 
     public void registerLinkFilter(int sourceNode, int destNode, LinkInfoReciver filter) {
         AbstractMap.SimpleEntry<Integer, Integer> pair = new AbstractMap.SimpleEntry<Integer, Integer>(sourceNode, destNode);
-        if (filterList.containsKey(pair)) {
-            filterList.get(pair).add(filter);
-        } else {
-            ArrayList<LinkInfoReciver> list = new ArrayList<LinkInfoReciver>();
-            list.add(filter);
-            filterList.put(pair, list);
+        synchronized (filterList) {
+            if (filterList.containsKey(pair)) {
+                filterList.get(pair).add(filter);
+            } else {
+                ArrayList<LinkInfoReciver> list = new ArrayList<LinkInfoReciver>();
+                list.add(filter);
+                filterList.put(pair, list);
+            }
         }
     }
 
     public void recvLinkInfo(LinkInfo ls) {
-        if (filterList.containsKey(ls.asEntry())) {
-            for (LinkInfoReciver lsr : filterList.get(ls.asEntry())) {
-                lsr.recvLinkInfo(ls);
+        synchronized (filterList) {
+            if (filterList.containsKey(ls.asEntry())) {
+                for (LinkInfoReciver lsr : filterList.get(ls.asEntry())) {
+                    lsr.recvLinkInfo(ls);
+                }
             }
         }
     }
