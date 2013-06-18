@@ -26,6 +26,7 @@ import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import static javax.swing.JFrame.EXIT_ON_CLOSE;
+import wsn.pp.data.Datasource;
 
 /**
  *
@@ -62,6 +63,9 @@ public class GNUPlot extends JFrame implements MouseListener {
         List<String> command = new ArrayList<String>();
 
         File gnuplot = new File("gnuplot");
+        if(Datasource._MACOS)
+            gnuplot = new File("/opt/local/bin/gnuplot");
+        System.out.println(gnuplot.exists() + " <---");
         File wdir = new File(System.getProperty("user.dir"));
 
         command.add(gnuplot.getPath());
