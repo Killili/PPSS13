@@ -11,8 +11,6 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -25,7 +23,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
-import static javax.swing.JFrame.EXIT_ON_CLOSE;
 import wsn.pp.data.Datasource;
 
 /**
@@ -40,6 +37,7 @@ public class GNUPlot extends JFrame implements MouseListener {
     private boolean isDirty;
     private String lastPlot;
     private boolean isRunning;
+    private boolean running;
 
     public GNUPlot() throws HeadlessException {
         this.setSize(640, 500);
@@ -55,11 +53,14 @@ public class GNUPlot extends JFrame implements MouseListener {
     public void plot(String script) throws InterruptedException, IOException, URISyntaxException {
         lastPlot = script;
         isDirty = true;
-        repaint();
+        if(process == null){
+            repaint();
+        }
     }
 
     public void graph(String script) throws InterruptedException, IOException, URISyntaxException {
         isDirty = false;
+        
         List<String> command = new ArrayList<String>();
 
         File gnuplot = new File("gnuplot");
@@ -115,10 +116,15 @@ public class GNUPlot extends JFrame implements MouseListener {
 
     @Override
     public void mouseClicked(MouseEvent e) {
+        if( e.getButton() == 3){
         Clipboard clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
         String data = lastPlot.replaceAll( "(?i)\\bset terminal png\\b" , "" ); 
         data = data.replaceAll( "(?i)\\bquit\\b" , "" ); 
         clpbrd.setContents(new StringSelection(data), null);
+        } else {
+            isDirty = true;
+            repaint();
+        }
     }
 
     @Override

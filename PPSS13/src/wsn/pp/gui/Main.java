@@ -27,7 +27,7 @@ public class Main implements MessageListener {
 
     private void addLink(int s, int d) {
         LinkATMFFilter atmf = new LinkATMFFilter(11, 0.2f, null);
-        LinkKNN knn = new LinkKNN(3, null);
+        LinkKNN knn = new LinkKNN(10, null);
 
         atmf.registerFilter(visualGui);
         atmf.registerFilter(knn);
