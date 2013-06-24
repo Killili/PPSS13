@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 /*
  * To change this template, choose Tools | Templates
@@ -27,6 +28,20 @@ public class LinkFilter implements LinkInfoReciver {
                 ArrayList<LinkInfoReciver> list = new ArrayList<LinkInfoReciver>();
                 list.add(filter);
                 filterList.put(pair, list);
+            }
+        }
+    }
+    
+    public void removeFilter(LinkInfoReciver lir){
+        synchronized (filterList){
+            Entry<Entry<Integer, Integer>, List<LinkInfoReciver>> tmp = null;
+            for (Map.Entry<Map.Entry<Integer, Integer>, List<LinkInfoReciver>> entry : filterList.entrySet()) {
+                if(entry.getValue().contains( lir )){
+                    tmp = entry;
+                }
+            }
+            if(tmp != null){
+                filterList.get(tmp.getKey()).remove(lir);
             }
         }
     }

@@ -24,6 +24,8 @@ import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import wsn.pp.data.Datasource;
+import wsn.pp.filter.LinkPlot;
+import wsn.pp.filter.Plotable;
 
 /**
  *
@@ -36,37 +38,34 @@ public class GNUPlot extends JFrame implements MouseListener {
     private BufferedImage img;
     private boolean isDirty;
     private String lastPlot;
-    private boolean isRunning;
-    private boolean running;
+   
+    private Plotable plotable;
 
-    public GNUPlot() throws HeadlessException {
+    private GNUPlot() throws HeadlessException {
         this.setSize(640, 500);
         this.setDefaultCloseOperation(HIDE_ON_CLOSE);
         this.setVisible(true);
         this.isDirty = false;
-        this.isRunning = false;
-        this.lastPlot = "";
+        this.lastPlot = null;
         this.addMouseListener(this);
+        this.plotable = null;
     }
-    
-   
-    public void plot(String script) throws InterruptedException, IOException, URISyntaxException {
-        lastPlot = script;
-        isDirty = true;
-        if(process == null){
-            repaint();
-        }
+
+    public GNUPlot(Plotable aThis) {
+        this();
+        this.plotable = aThis;  
     }
 
     public void graph(String script) throws InterruptedException, IOException, URISyntaxException {
         isDirty = false;
-        
+
         List<String> command = new ArrayList<String>();
 
         File gnuplot = new File("gnuplot");
-        if(Datasource._MACOS)
+        if (Datasource._MACOS) {
             gnuplot = new File("/opt/local/bin/gnuplot");
-        System.out.println(gnuplot.exists() + " <---");
+            System.out.println(gnuplot.exists() + " <---");
+        }
         File wdir = new File(System.getProperty("user.dir"));
 
         command.add(gnuplot.getPath());
@@ -116,14 +115,17 @@ public class GNUPlot extends JFrame implements MouseListener {
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        if( e.getButton() == 3){
-        Clipboard clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
-        String data = lastPlot.replaceAll( "(?i)\\bset terminal png\\b" , "" ); 
-        data = data.replaceAll( "(?i)\\bquit\\b" , "" ); 
-        clpbrd.setContents(new StringSelection(data), null);
+        if (e.getButton() == 3) {
+            Clipboard clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
+            String data = lastPlot.replaceAll("(?i)\\bset terminal png\\b", "");
+            data = data.replaceAll("(?i)\\bquit\\b", "");
+            clpbrd.setContents(new StringSelection(data), null);
         } else {
-            isDirty = true;
-            repaint();
+            if( (lastPlot = plotable.getPlotString()) != null ){
+                isDirty = true;
+                lastPlot = plotable.getPlotString();
+                repaint();
+            }
         }
     }
 
@@ -132,14 +134,14 @@ public class GNUPlot extends JFrame implements MouseListener {
     }
 
     @Override
-    public void mouseReleased(MouseEvent e) {       
+    public void mouseReleased(MouseEvent e) {
     }
 
     @Override
-    public void mouseEntered(MouseEvent e) {       
+    public void mouseEntered(MouseEvent e) {
     }
 
     @Override
-    public void mouseExited(MouseEvent e) {       
+    public void mouseExited(MouseEvent e) {
     }
 }

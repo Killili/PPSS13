@@ -8,7 +8,6 @@ import wsn.pp.data.Datasource;
 import wsn.pp.filter.LinkATMFFilter;
 import wsn.pp.filter.LinkFilter;
 import wsn.pp.filter.LinkKNN;
-import wsn.pp.gui.view.VisualGuiControl;
 import wsn.pp.messages.SnoopBCMsg;
 
 public class Main implements MessageListener {
@@ -23,13 +22,12 @@ public class Main implements MessageListener {
     private ConfigView cv;
     private final LinkFilter lf;
     private final KNNControl knnc;
-    private VisualGuiControl visualGui;
-
+    
     private void addLink(int s, int d) {
         LinkATMFFilter atmf = new LinkATMFFilter(11, 0.2f, null);
-        LinkKNN knn = new LinkKNN(10, null);
+        LinkKNN knn = new LinkKNN(6, null);
 
-        atmf.registerFilter(visualGui);
+        //atmf.registerFilter(visualGui);
         atmf.registerFilter(knn);
         lf.registerLinkFilter(s, d, atmf);
         knnc.addKNN(knn,atmf,s,d);

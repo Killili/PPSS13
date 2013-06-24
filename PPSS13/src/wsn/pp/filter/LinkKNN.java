@@ -26,17 +26,24 @@ import wsn.pp.gui.KNNControl;
  *
  * @author Killi
  */
-public class LinkKNN extends Filter {
+public class LinkKNN extends Filter implements Plotable {
 
     private String learnType;
     private Map<String, List<DataPoint>> data;
+    private Map<String, Float> typeWeights;
     private List<DataPoint> learnPackage;
     private boolean learning;
     private int k;
     private GNUPlot plot;
-    private int plotCounter = 0;
     private String title = "NotSet";
     private KNNControl knnControl;
+    private String testingType;
+    private int testingScore;
+    private int testingPoints;
+    private int missfirePoints;
+    private Map<String, Float> missfireWeights;
+    private int totalPointsForMissfireRating;
+    private LinkInfo lastLinkInfo;
 
     @Override
     public String toString() {
@@ -47,6 +54,8 @@ public class LinkKNN extends Filter {
         super(nextFilter);
         this.k = k;
         this.data = new HashMap<String, List<DataPoint>>();
+        this.typeWeights = new HashMap<String, Float>();
+        this.missfireWeights = new HashMap<String, Float>();
     }
 
     public void learnType(String type) {
@@ -102,12 +111,8 @@ public class LinkKNN extends Filter {
             }
         }
 
-
-
         DataPoint current = new DataPoint("Current", new Point(ls.power, (Double) ls.metaData.get("StdDev")));
         List<Neighbores> neighbores = findNearestNeighbores(current);
-
-        title = ls.sourceNode + "->" + ls.destinationNode;
 
         if (neighbores.size() >= k) {
             HashMap<String, Integer> counter = new HashMap<String, Integer>();
@@ -133,19 +138,43 @@ public class LinkKNN extends Filter {
                     }
                 }
             });
-            ls.metaData.put("KNNState", hits.get(0).getKey());
-            ls.metaData.put("KNNConfidence", counter.get(hits.get(0).getKey()));
-            title += " (" + hits.get(0).getKey() + " " + ((float) (counter.get(hits.get(0).getKey())) / (float) k) + ")";
+
+            String estimatedType = hits.get(0).getKey();
+            float confidence = (float) (counter.get(hits.get(0).getKey())) / (float) k;
+            ls.metaData.put("KNNState", estimatedType);
+            ls.metaData.put("KNNConfidence", confidence);
+
+
+            if (testingType != null) {
+                totalPointsForMissfireRating += 1;
+                if (estimatedType.equals(testingType)) {
+                    testingScore += 1;
+                } else {
+                    missfirePoints += 1;
+                    if (missfireWeights.containsKey(testingType)) {
+                        missfireWeights.put(testingType, missfireWeights.get(testingType) + 1);
+                    } else {
+                        missfireWeights.put(testingType, 1f);
+                    }
+                }
+                testingPoints += 1;
+            } else {
+                title += "\t w: " + typeWeights.get(estimatedType) + "\t mf: " + missfireWeights.get(estimatedType);
+            }
+            title = String.format("%d->%d %12s c:%.2f w:%.2f ( m:%4.0f mr:%5d dp:%5d )", ls.sourceNode, ls.destinationNode, estimatedType, confidence, typeWeights.get(estimatedType), missfireWeights.get(estimatedType), missfirePoints, totalPointsForMissfireRating);
+
+            ls.metaData.put("KNNStateWeigth", typeWeights.get(estimatedType));
+            ls.metaData.put("KNNStateMissfired", missfireWeights.get(estimatedType));
+            ls.metaData.put("KNNTotalMissfired", missfirePoints);
+
+        } else {
+            title = String.format("%d->%d", ls.sourceNode, ls.destinationNode);
         }
 
         ls.metaData.put("Datapoint", current);
         ls.metaData.put("Neighbores", neighbores);
 
-        if (plotCounter > 50) {
-            plot(ls, neighbores);
-            plotCounter = 0;
-        }
-        plotCounter += 1;
+        lastLinkInfo = ls;
 
         if (this.knnControl != null) {
             knnControl.updateKNN(this);
@@ -154,84 +183,54 @@ public class LinkKNN extends Filter {
         super.recvLinkInfo(ls);
     }
 
-    public void startPloting() {
-        if (plot == null) {
-            plot = new GNUPlot();
-            plot.addWindowListener(new WindowListener() {
-                @Override
-                public void windowOpened(WindowEvent e) {
-                }
-
-                @Override
-                public void windowClosing(WindowEvent e) {
-                    plot = null;
-                }
-
-                @Override
-                public void windowClosed(WindowEvent e) {
-                }
-
-                @Override
-                public void windowIconified(WindowEvent e) {
-                }
-
-                @Override
-                public void windowDeiconified(WindowEvent e) {
-                }
-
-                @Override
-                public void windowActivated(WindowEvent e) {
-                }
-
-                @Override
-                public void windowDeactivated(WindowEvent e) {
-                }
-            });
-        }
-        plotCounter += 1;
+    public void startPloting() { 
+        plot = new GNUPlot(this);
     }
 
+    @Override
+    public String getPlotString() {
+        String dataString = "";
+        String plotString = "set terminal png\n";
 
-    private void plot(LinkInfo ls, List<Neighbores> neighbores) {
-        if(plot == null) return;
-        try {
-            String dataString = "";
-            String plotString = "set terminal png\n";
+        plotString += "set title \"Link " + lastLinkInfo.sourceNode + "->" + lastLinkInfo.destinationNode + "\"\n";
 
-            plotString += "set title \"Link " + ls.sourceNode + "->" + ls.destinationNode + "\"\n";
-
-            plotString += "set xrange [-25:15]\n set yrange [0:5]\n";
-            plotString += "plot ";
-            for (String type : data.keySet()) {
-                if (data.get(type).size() > 0) {
-                    plotString += "'-' title \"" + type + "\" with circles,";
-                    for (DataPoint i : data.get(type)) {
-                        dataString += i.position.x + " " + i.position.y + "\n";
-                    }
-                    dataString += "e\n";
-                }
-            }
-
-
-            if (neighbores.size() > 0) {
-                plotString += "'-' title \"Neighbores\" with circles fs transparent solid 0.15 noborder,";
-                for (Neighbores neighbore : neighbores) {
-                    dataString += neighbore.data.position.x + " " + neighbore.data.position.y + "\n";
+        plotString += "set xrange [-25:15]\n set yrange [0:10]\n";
+        plotString += "plot ";
+        for (String type : data.keySet()) {
+            if (data.get(type).size() > 0) {
+                plotString += "'-' title \"" + type + "\" with circles,";
+                for (DataPoint i : data.get(type)) {
+                    dataString += i.position.x + " " + i.position.y + " 0.2\n";
                 }
                 dataString += "e\n";
             }
-
-            plotString += "'-' title \"Current\" with circles fs transparent solid 0.15 noborder";
-            dataString += ls.power + " " + (Double) ls.metaData.get("StdDev") + "\ne\n";
-
-            plot.plot(plotString + "\n" + dataString);
-        } catch (InterruptedException ex) {
-            Logger.getLogger(LinkKNN.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(LinkKNN.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (URISyntaxException ex) {
-            Logger.getLogger(LinkKNN.class.getName()).log(Level.SEVERE, null, ex);
         }
+
+        List<Neighbores> neighbores = (List<Neighbores>)lastLinkInfo.getMetaData().get("Neighbores");
+        if (neighbores.size() > 0) {
+            plotString += "'-' title \"Neighbores\" with circles fs solid,";
+            for (Neighbores neighbore : neighbores) {
+                dataString += neighbore.data.position.x + " " + neighbore.data.position.y + " 0.2\n";
+            }
+            dataString += "e\n";
+        }
+
+        plotString += "'-' title \"Current\" with circles fs solid";
+        dataString += lastLinkInfo.power + " " + (Double) lastLinkInfo.metaData.get("StdDev") + " 0.2\ne\n";
+
+        return plotString + "\n" + dataString;
+
+    }
+
+    public void testType(String type) {
+        testingType = type;
+        testingScore = 0;
+        testingPoints = 0;
+    }
+
+    public void stopTesting() {
+        typeWeights.put(testingType, (float) testingScore / (float) testingPoints);
+        testingType = null;
     }
 
     private static class DataPoint {
@@ -275,7 +274,6 @@ public class LinkKNN extends Filter {
             this.x /= div;
             this.y /= div;
         }
-
     }
 
     private static class Neighbores implements Comparable<Neighbores> {

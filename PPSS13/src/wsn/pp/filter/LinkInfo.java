@@ -56,6 +56,14 @@ public class LinkInfo {
     public long getTimestamp() {
         return timestamp;
     }
-    
-    
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj instanceof LinkInfo){
+            LinkInfo li = (LinkInfo) obj;
+            return li.getSourceNode() == this.getSourceNode() && li.getDestinationNode() == this.getDestinationNode();
+        }
+        return false;
+    }
+   
 }

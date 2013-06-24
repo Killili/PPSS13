@@ -63,7 +63,7 @@ public class Datasource implements MessageListener {
                 Packet p = null;
                 while (true) {
                     p = (Packet) in.readObject();
-                    this.messageReceivedWithTimestamp(p.adress, new SnoopBCMsg(p.data, 8), p.time);
+                    this.messageReceivedWithTimestamp(p.adress, new SnoopBCMsg(p.data, 8), p.time, true);
                 }
             } catch (EOFException e) { // Playback done
             } catch (ClassNotFoundException ex) {
@@ -80,7 +80,7 @@ public class Datasource implements MessageListener {
             ConfigMsg msg = new ConfigMsg();
             msg.set_interval(interval);
             msg.set_signalStrength((byte) level);
-            if( mote != null ){
+            if (mote != null) {
                 mote.send(node, msg);
             }
         } catch (IOException ex) {
@@ -89,7 +89,9 @@ public class Datasource implements MessageListener {
     }
 
     public void stopRecording() {
-        if(out == null ) return;
+        if (out == null) {
+            return;
+        }
         try {
             synchronized (out) {
                 out.close();
@@ -128,16 +130,20 @@ public class Datasource implements MessageListener {
     @Override
     public synchronized void messageReceived(int node, Message msg) {
         if (liveData) {
-            messageReceivedWithTimestamp(node, msg, System.nanoTime());
+            messageReceivedWithTimestamp(node, msg, System.nanoTime(), true);
         }
     }
 
-    private synchronized void messageReceivedWithTimestamp(int node, Message msg, long timestamp) {
+    private synchronized void messageReceivedWithTimestamp(int node, Message msg, long timestamp, boolean plot) {
         if (slave != null && msg instanceof SnoopBCMsg) {
             SnoopBCMsg sm = (SnoopBCMsg) msg;
             //Logger.getLogger(Datasource.class.getName()).log(Level.INFO, String.format("Msg from %d", sm.get_nodeid()));
             for (int i = 0; i < 10; i++) {
-                slave.recvLinkInfo(new LinkInfo(i + 1, sm.get_nodeid(), sm.get_othernodes()[i], timestamp));
+                LinkInfo li = new LinkInfo(i + 1, sm.get_nodeid(), sm.get_othernodes()[i], timestamp);
+                if (plot == false) {
+                    li.getMetaData().put("DoNotPlot", null);
+                }
+                slave.recvLinkInfo(li);
             }
         }
         if (out != null && msg instanceof SnoopBCMsg) {

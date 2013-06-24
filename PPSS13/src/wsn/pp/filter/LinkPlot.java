@@ -4,55 +4,87 @@
  */
 package wsn.pp.filter;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import wsn.pp.gui.GNUPlot;
 
 /**
  *
  * @author user
  */
-public class LinkPlot extends Filter {
+public class LinkPlot extends Filter implements Plotable {
 
     private final List<LinkInfo> data;
     private final GNUPlot plot;
     private final String title;
     public static int miny = -20;
     public static int maxy = 20;
+    private int sourceNode;
+    private int destinationNode;
 
-    public LinkPlot(String title, LinkInfoReciver lsr) {
+    public LinkPlot(String title, final Object lf, LinkInfoReciver lsr) {
         super(lsr);
         this.title = title;
         data = new ArrayList<LinkInfo>();
-        plot = new GNUPlot();
+
+        plot = new GNUPlot(this);
+        plot.addWindowListener(new WindowListener() {
+            @Override
+            public void windowOpened(WindowEvent e) {
+            }
+
+            @Override
+            public void windowClosing(WindowEvent e) {
+                if( lf instanceof LinkFilter){
+                    ((LinkFilter)lf).removeFilter(LinkPlot.this);
+                } else if (lf instanceof Filter) {
+                    ((Filter)lf).removeFilter(LinkPlot.this);
+                }
+            }
+
+            @Override
+            public void windowClosed(WindowEvent e) {
+            }
+
+            @Override
+            public void windowIconified(WindowEvent e) {
+            }
+
+            @Override
+            public void windowDeiconified(WindowEvent e) {
+            }
+
+            @Override
+            public void windowActivated(WindowEvent e) {
+            }
+
+            @Override
+            public void windowDeactivated(WindowEvent e) {
+            }
+        });
+
     }
 
-    public LinkPlot(String title) {
-        this(title, null);
+    public LinkPlot(String title, Object lf) {
+        this(title,lf, null);
     }
 
     @Override
     public void recvLinkInfo(LinkInfo ls) {
-        try {
-            data.add(ls);
-            String dataString = "";
-            for (LinkInfo i : data) {
-                dataString += i.timestamp + " " + i.power + "\n";
-            }
-            plot.plot("set terminal png\n set yrange ["+ maxy + ":" + miny +"] \n plot '-' title \"" + this.title + "( " + ls.sourceNode + " -> " + ls.destinationNode + " )\" with linespoints\n" + dataString + "e\nquit\n");
+        data.add(ls);
+        sourceNode = ls.getSourceNode();
+        destinationNode = ls.getDestinationNode();
+    }
 
-
-        } catch (InterruptedException ex) {
-            Logger.getLogger(LinkPlot.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(LinkPlot.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (URISyntaxException ex) {
-            Logger.getLogger(LinkPlot.class.getName()).log(Level.SEVERE, null, ex);
+    @Override
+    public String getPlotString() {
+        String dataString = "";
+        for (LinkInfo i : data) {
+            dataString += i.timestamp + " " + i.power + "\n";
         }
+        return "set terminal png\n set yrange [" + maxy + ":" + miny + "] \n plot '-' title \"" + this.title + "( " + sourceNode + " -> " + destinationNode + " )\" with linespoints\n" + dataString + "e\nquit\n";
 
     }
 }

@@ -25,6 +25,13 @@ public class Filter implements LinkInfoReciver {
         return this;
     }
     
+    public LinkInfoReciver removeFilter(LinkInfoReciver lir){
+        if(lir != null){
+            childs.remove(lir);
+        }
+        return this;
+    }
+    
     @Override
     public void recvLinkInfo(LinkInfo ls) {
         for(LinkInfoReciver lir: childs){
