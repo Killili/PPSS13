@@ -40,7 +40,7 @@ public class LinkKNN extends Filter implements Plotable {
     private String testingType;
     private int testingScore;
     private int testingPoints;
-    private int missfirePoints;
+    private float missfirePoints;
     private Map<String, Float> missfireWeights;
     private int totalPointsForMissfireRating;
     private LinkInfo lastLinkInfo;
@@ -161,7 +161,7 @@ public class LinkKNN extends Filter implements Plotable {
             } else {
                 title += "\t w: " + typeWeights.get(estimatedType) + "\t mf: " + missfireWeights.get(estimatedType);
             }
-            title = String.format("%d->%d %12s c:%.2f w:%.2f ( m:%4.0f mr:%5d dp:%5d )", ls.sourceNode, ls.destinationNode, estimatedType, confidence, typeWeights.get(estimatedType), missfireWeights.get(estimatedType), missfirePoints, totalPointsForMissfireRating);
+            title = String.format("%d->%d %12s c:%.2f w:%.2f ( m:%4.0f mr:%5.0f dp:%5d )", ls.sourceNode, ls.destinationNode, estimatedType, confidence, typeWeights.get(estimatedType), missfireWeights.get(estimatedType), missfirePoints, totalPointsForMissfireRating);
 
             ls.metaData.put("KNNStateWeigth", typeWeights.get(estimatedType));
             ls.metaData.put("KNNStateMissfired", missfireWeights.get(estimatedType));

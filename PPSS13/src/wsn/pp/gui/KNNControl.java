@@ -39,6 +39,9 @@ public class KNNControl extends javax.swing.JFrame implements LinkInfoReciver {
     private final HashMap<LinkKNN, Map.Entry<Integer, Integer>> links;
     private final LinkFilter linkFilter;
     private final LinkedList<LinkInfo> data;
+    private String systemTestType;
+    private HashMap<String, Float> systemTestScores;
+    private float systemTestPoints;
 
     /**
      * Creates new form KNNControl
@@ -49,6 +52,10 @@ public class KNNControl extends javax.swing.JFrame implements LinkInfoReciver {
         this.links = new HashMap<LinkKNN, Entry<Integer, Integer>>();
         this.linkFilter = lf;
         this.data = new LinkedList<LinkInfo>();
+        systemTestScores = new HashMap<String,Float>();
+        systemTestScores.put("Mayority", 0f);
+        systemTestScores.put("Confidence", 0f);
+        systemTestScores.put("Weigth", 0f);
         initComponents();
     }
 
@@ -97,6 +104,12 @@ public class KNNControl extends javax.swing.JFrame implements LinkInfoReciver {
         lblConfStatus = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
         lblStateWeighted = new javax.swing.JLabel();
+        lblSysWe = new javax.swing.JLabel();
+        lblSysMa = new javax.swing.JLabel();
+        lblSysCo = new javax.swing.JLabel();
+        jLabel9 = new javax.swing.JLabel();
+        lblStateMissfire = new javax.swing.JLabel();
+        lblSysMis = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
         jSpinner1 = new javax.swing.JSpinner();
         jSpinner2 = new javax.swing.JSpinner();
@@ -152,7 +165,7 @@ public class KNNControl extends javax.swing.JFrame implements LinkInfoReciver {
 
         jLabel5.setText("Filename");
 
-        btnPlay.setText("Just playback");
+        btnPlay.setText("Playback File and Test the whole system");
         btnPlay.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnPlayActionPerformed(evt);
@@ -301,6 +314,28 @@ public class KNNControl extends javax.swing.JFrame implements LinkInfoReciver {
         lblStateWeighted.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblStateWeighted.setText("Unkown");
 
+        lblSysWe.setFont(new java.awt.Font("Tahoma", 0, 48)); // NOI18N
+        lblSysWe.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblSysWe.setText("Unkown");
+
+        lblSysMa.setFont(new java.awt.Font("Tahoma", 0, 48)); // NOI18N
+        lblSysMa.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblSysMa.setText("Unkown");
+
+        lblSysCo.setFont(new java.awt.Font("Tahoma", 0, 48)); // NOI18N
+        lblSysCo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblSysCo.setText("Unkown");
+
+        jLabel9.setText("State by confidence with links having trust < 10% discarded (trust = missfired_this_state / total_missfires)");
+
+        lblStateMissfire.setFont(new java.awt.Font("Tahoma", 0, 48)); // NOI18N
+        lblStateMissfire.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblStateMissfire.setText("Unkown");
+
+        lblSysMis.setFont(new java.awt.Font("Tahoma", 0, 48)); // NOI18N
+        lblSysMis.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblSysMis.setText("Unkown");
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
@@ -308,15 +343,27 @@ public class KNNControl extends javax.swing.JFrame implements LinkInfoReciver {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lblStatus, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 659, Short.MAX_VALUE)
-                    .addComponent(lblConfStatus, javax.swing.GroupLayout.DEFAULT_SIZE, 659, Short.MAX_VALUE)
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel6)
                             .addComponent(jLabel7)
-                            .addComponent(jLabel8))
+                            .addComponent(jLabel8)
+                            .addComponent(jLabel9))
                         .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(lblStateWeighted, javax.swing.GroupLayout.DEFAULT_SIZE, 659, Short.MAX_VALUE))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(lblStateMissfire, javax.swing.GroupLayout.DEFAULT_SIZE, 482, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(lblSysMis, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblStateWeighted, javax.swing.GroupLayout.DEFAULT_SIZE, 482, Short.MAX_VALUE)
+                            .addComponent(lblConfStatus, javax.swing.GroupLayout.DEFAULT_SIZE, 482, Short.MAX_VALUE)
+                            .addComponent(lblStatus, javax.swing.GroupLayout.DEFAULT_SIZE, 482, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(lblSysMa, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(lblSysCo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(lblSysWe, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
@@ -325,16 +372,28 @@ public class KNNControl extends javax.swing.JFrame implements LinkInfoReciver {
                 .addContainerGap()
                 .addComponent(jLabel6)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lblStatus)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblStatus)
+                    .addComponent(lblSysMa))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel7)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lblConfStatus)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblConfStatus)
+                    .addComponent(lblSysCo))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel8)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lblStateWeighted)
-                .addContainerGap(123, Short.MAX_VALUE))
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblStateWeighted)
+                    .addComponent(lblSysWe))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel9)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblStateMissfire)
+                    .addComponent(lblSysMis))
+                .addContainerGap(39, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("System State", jPanel3);
@@ -498,7 +557,21 @@ public class KNNControl extends javax.swing.JFrame implements LinkInfoReciver {
 
     private void btnPlayActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPlayActionPerformed
         File file = new File("data/" + txtFile.getText());
+        systemTestScores = new HashMap<String,Float>();
+        systemTestScores.put("Mayority", 0f);
+        systemTestScores.put("Confidence", 0f);
+        systemTestScores.put("Weigth", 0f);
+        systemTestScores.put("Missfire", 0f);
+        systemTestPoints = 0f;
+        systemTestType = (String) lstTypes.getSelectedValue();
+        
         Datasource.getInstance().playRecording(file);
+        
+        lblSysMa.setText( String.format("%f.3",(systemTestScores.get("Mayority") / systemTestPoints) ));
+        lblSysCo.setText( String.format("%f.3",(systemTestScores.get("Confidence") / systemTestPoints) ));
+        lblSysWe.setText( String.format("%f.3",(systemTestScores.get("Weigth") / systemTestPoints) ));
+        lblSysMis.setText(String.format("%f.3",(systemTestScores.get("Missfire") / systemTestPoints) ));
+        
     }//GEN-LAST:event_btnPlayActionPerformed
 
     private void btnTestActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTestActionPerformed
@@ -534,6 +607,7 @@ public class KNNControl extends javax.swing.JFrame implements LinkInfoReciver {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
@@ -544,8 +618,13 @@ public class KNNControl extends javax.swing.JFrame implements LinkInfoReciver {
     private javax.swing.JSpinner jSpinner2;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JLabel lblConfStatus;
+    private javax.swing.JLabel lblStateMissfire;
     private javax.swing.JLabel lblStateWeighted;
     private javax.swing.JLabel lblStatus;
+    private javax.swing.JLabel lblSysCo;
+    private javax.swing.JLabel lblSysMa;
+    private javax.swing.JLabel lblSysMis;
+    private javax.swing.JLabel lblSysWe;
     private javax.swing.JList lstEstimate;
     private javax.swing.JList lstTypes;
     private javax.swing.JTextField txtFile;
@@ -579,9 +658,8 @@ public class KNNControl extends javax.swing.JFrame implements LinkInfoReciver {
                     counter.put(key, 1f);
                 }
             }
-            Entry<String, Float> bestHit = getBestHit(counter);
-
-            lblStatus.setText(bestHit.getKey() + " " + (float)(bestHit.getValue()));
+            Entry<String, Float> bestHitMa = getBestHit(counter);
+            lblStatus.setText( String.format("%10s %.2f", bestHitMa.getKey() , (float)bestHitMa.getValue()));
             
             counter.clear();
             for (LinkInfo li : data) {
@@ -595,8 +673,8 @@ public class KNNControl extends javax.swing.JFrame implements LinkInfoReciver {
                     counter.put(key,(Float)li.getMetaData().get("KNNConfidence"));
                 }
             }
-            bestHit = getBestHit(counter);
-            lblConfStatus.setText(bestHit.getKey() + " " + (float)(bestHit.getValue()));
+            Entry<String, Float> bestHitCo = getBestHit(counter);
+            lblConfStatus.setText( String.format("%10s %.2f", bestHitCo.getKey() , (float)bestHitCo.getValue()));
             
             for (LinkInfo li : data) {
                 String key = (String) li.getMetaData().get("KNNState");
@@ -610,8 +688,36 @@ public class KNNControl extends javax.swing.JFrame implements LinkInfoReciver {
                     counter.put(key,(Float)li.getMetaData().get("KNNConfidence") * (Float)li.getMetaData().get("KNNStateWeigth"));
                 }
             }
-            bestHit = getBestHit(counter);
-            lblStateWeighted.setText(bestHit.getKey() + " " + (float)(bestHit.getValue()));
+            Entry<String, Float> bestHitWe = getBestHit(counter);
+            lblStateWeighted.setText( String.format("%10s %.2f", bestHitWe.getKey() , (float)bestHitWe.getValue()));
+            
+            for (LinkInfo li : data) {
+                String key = (String) li.getMetaData().get("KNNState");
+                if(key == null) return;
+                if((Float)li.getMetaData().get("KNNStateMissfired") == null ) return;
+                
+                float trust = (Float)(li.getMetaData().get("KNNStateMissfired")) / (Float)(li.getMetaData().get("KNNTotalMissfired"));
+                if( trust < 0.1f ) continue;
+                
+                if (counter.containsKey(key)) {
+                    Float tmp = counter.get(key);
+                    tmp += (Float)li.getMetaData().get("KNNConfidence");
+                    counter.put(key, tmp);
+                } else {
+                    counter.put(key,(Float)li.getMetaData().get("KNNConfidence"));
+                }
+                
+            }
+            Entry<String, Float> bestHitMf = getBestHit(counter);
+            lblStateMissfire.setText( String.format("%10s %.2f", bestHitMf.getKey() , (float)bestHitMf.getValue()));
+            
+            if(systemTestType != null){
+                systemTestPoints += 1;
+                if( bestHitMa.getKey().equals( systemTestType ) )systemTestScores.put("Mayority", systemTestScores.get("Mayority") + 1);
+                if( bestHitCo.getKey().equals( systemTestType ) )systemTestScores.put("Confidence", systemTestScores.get("Confidence") + 1);
+                if( bestHitWe.getKey().equals( systemTestType ) )systemTestScores.put("Weigth", systemTestScores.get("Weigth") + 1);
+                if( bestHitMf.getKey().equals( systemTestType ) )systemTestScores.put("Missfire", systemTestScores.get("Missfire") + 1);
+            }
         }
     }
 
