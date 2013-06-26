@@ -110,6 +110,7 @@ public class KNNControl extends javax.swing.JFrame implements LinkInfoReciver {
         jLabel9 = new javax.swing.JLabel();
         lblStateMissfire = new javax.swing.JLabel();
         lblSysMis = new javax.swing.JLabel();
+        jLabel10 = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
         jSpinner1 = new javax.swing.JSpinner();
         jSpinner2 = new javax.swing.JSpinner();
@@ -120,7 +121,7 @@ public class KNNControl extends javax.swing.JFrame implements LinkInfoReciver {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         lstTypes.setModel(new javax.swing.AbstractListModel() {
-            String[] strings = { "Empty", "Standing-1", "Standing-2", "Standing-3", "Moving" };
+            String[] strings = { "Empty", "Standing-A", "Standing-B", "Standing-C", "Standing-D", "Standing-E", "Standing-F", "Moving-Top", "Moving-Bottum", " " };
             public int getSize() { return strings.length; }
             public Object getElementAt(int i) { return strings[i]; }
         });
@@ -145,7 +146,7 @@ public class KNNControl extends javax.swing.JFrame implements LinkInfoReciver {
             }
         });
 
-        txtPattern.setText("Flur");
+        txtPattern.setText("Küche");
 
         btnRecord.setText("Learn and Save to File");
         btnRecord.addActionListener(new java.awt.event.ActionListener() {
@@ -336,6 +337,8 @@ public class KNNControl extends javax.swing.JFrame implements LinkInfoReciver {
         lblSysMis.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblSysMis.setText("Unkown");
 
+        jLabel10.setText("Totals for the last Testrun");
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
@@ -345,7 +348,10 @@ public class KNNControl extends javax.swing.JFrame implements LinkInfoReciver {
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel6)
+                            .addGroup(jPanel3Layout.createSequentialGroup()
+                                .addComponent(jLabel6)
+                                .addGap(343, 343, 343)
+                                .addComponent(jLabel10))
                             .addComponent(jLabel7)
                             .addComponent(jLabel8)
                             .addComponent(jLabel9))
@@ -368,7 +374,9 @@ public class KNNControl extends javax.swing.JFrame implements LinkInfoReciver {
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel6)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel6)
+                    .addComponent(jLabel10))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblStatus)
@@ -598,6 +606,7 @@ public class KNNControl extends javax.swing.JFrame implements LinkInfoReciver {
     private javax.swing.JButton btnRecord;
     private javax.swing.JButton btnTest;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;

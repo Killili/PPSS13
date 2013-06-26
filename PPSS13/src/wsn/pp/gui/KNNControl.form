@@ -127,12 +127,17 @@
                 <Component class="javax.swing.JList" name="lstTypes">
                   <Properties>
                     <Property name="model" type="javax.swing.ListModel" editor="org.netbeans.modules.form.editors2.ListModelEditor">
-                      <StringArray count="5">
+                      <StringArray count="10">
                         <StringItem index="0" value="Empty"/>
-                        <StringItem index="1" value="Standing-1"/>
-                        <StringItem index="2" value="Standing-2"/>
-                        <StringItem index="3" value="Standing-3"/>
-                        <StringItem index="4" value="Moving"/>
+                        <StringItem index="1" value="Standing-A"/>
+                        <StringItem index="2" value="Standing-B"/>
+                        <StringItem index="3" value="Standing-C"/>
+                        <StringItem index="4" value="Standing-D"/>
+                        <StringItem index="5" value="Standing-E"/>
+                        <StringItem index="6" value="Standing-F"/>
+                        <StringItem index="7" value="Moving-Top"/>
+                        <StringItem index="8" value="Moving-Bottum"/>
+                        <StringItem index="9" value=" "/>
                       </StringArray>
                     </Property>
                   </Properties>
@@ -160,7 +165,7 @@
             </Component>
             <Component class="javax.swing.JTextField" name="txtPattern">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Flur"/>
+                <Property name="text" type="java.lang.String" value="K&#xfc;che"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JButton" name="btnRecord">
@@ -320,7 +325,11 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" attributes="0">
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="jLabel6" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <Component id="jLabel6" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace min="-2" pref="343" max="-2" attributes="0"/>
+                                      <Component id="jLabel10" min="-2" max="-2" attributes="0"/>
+                                  </Group>
                                   <Component id="jLabel7" alignment="0" min="-2" max="-2" attributes="0"/>
                                   <Component id="jLabel8" alignment="0" min="-2" max="-2" attributes="0"/>
                                   <Component id="jLabel9" alignment="0" min="-2" max="-2" attributes="0"/>
@@ -351,7 +360,10 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jLabel6" min="-2" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="jLabel6" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="jLabel10" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="lblStatus" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -474,6 +486,11 @@
                 </Property>
                 <Property name="horizontalAlignment" type="int" value="0"/>
                 <Property name="text" type="java.lang.String" value="Unkown"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JLabel" name="jLabel10">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Totals for the last Testrun"/>
               </Properties>
             </Component>
           </SubComponents>

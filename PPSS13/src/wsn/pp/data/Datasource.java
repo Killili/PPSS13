@@ -35,6 +35,7 @@ public class Datasource implements MessageListener {
     private MoteIF mote;
     private final LinkInfoReciver slave;
     private ObjectOutputStream out;
+    private Object outSync = new Object();
     private FileOutputStream fileOut;
     private long startTime;
     private static Datasource _instance;
@@ -46,9 +47,11 @@ public class Datasource implements MessageListener {
 
     public void startRecording(File file) throws FileNotFoundException {
         try {
+            synchronized(outSync){
             fileOut = new FileOutputStream(file);
             out = new ObjectOutputStream(fileOut);
             startTime = System.nanoTime();
+            }
         } catch (IOException ex) {
             Logger.getLogger(Datasource.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -93,10 +96,12 @@ public class Datasource implements MessageListener {
             return;
         }
         try {
-            synchronized (out) {
+            synchronized (outSync) {
                 out.close();
                 fileOut.close();
-                out = null;
+                
+                    out = null;
+                
             }
         } catch (IOException ex) {
             Logger.getLogger(Datasource.class.getName()).log(Level.SEVERE, null, ex);
@@ -110,9 +115,9 @@ public class Datasource implements MessageListener {
             if (_MACOS) {
                 return;
             }
-            //mote = new MoteIF(PrintStreamMessenger.err);
+            mote = new MoteIF(PrintStreamMessenger.err);
             //mote = new MoteIF(BuildSource.makePhoenix("sf@192.168.178.39:9002", PrintStreamMessenger.err));
-            //mote.registerListener(new SnoopBCMsg(), this);
+            mote.registerListener(new SnoopBCMsg(), this);
         } else {
             playRecording(file);
         }
@@ -146,8 +151,8 @@ public class Datasource implements MessageListener {
                 slave.recvLinkInfo(li);
             }
         }
-        if (out != null && msg instanceof SnoopBCMsg) {
-            synchronized (out) {
+        synchronized (outSync) {
+            if (out != null && msg instanceof SnoopBCMsg) {
                 try {
                     out.writeObject(new Packet(System.nanoTime() - startTime, node, msg));
                 } catch (IOException ex) {

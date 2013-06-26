@@ -73,7 +73,9 @@ public class LinkPlot extends Filter implements Plotable {
 
     @Override
     public void recvLinkInfo(LinkInfo ls) {
-        data.add(ls);
+        synchronized(data){
+            data.add(ls);
+        }
         sourceNode = ls.getSourceNode();
         destinationNode = ls.getDestinationNode();
     }
@@ -81,8 +83,10 @@ public class LinkPlot extends Filter implements Plotable {
     @Override
     public String getPlotString() {
         String dataString = "";
-        for (LinkInfo i : data) {
-            dataString += i.timestamp + " " + i.power + "\n";
+        synchronized(data){
+            for (LinkInfo i : data) {
+                dataString += i.timestamp + " " + i.power + "\n";
+            }
         }
         return "set terminal png\n set yrange [" + maxy + ":" + miny + "] \n plot '-' title \"" + this.title + "( " + sourceNode + " -> " + destinationNode + " )\" with linespoints\n" + dataString + "e\nquit\n";
 
