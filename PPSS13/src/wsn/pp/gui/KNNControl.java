@@ -21,6 +21,7 @@ import javax.swing.AbstractListModel;
 import javax.swing.DefaultListModel;
 import sun.java2d.pipe.SpanShapeRenderer;
 import wsn.pp.data.Datasource;
+import wsn.pp.filter.Filter;
 import wsn.pp.filter.LinkATMFFilter;
 import wsn.pp.filter.LinkFilter;
 import wsn.pp.filter.LinkInfo;
@@ -35,7 +36,7 @@ import wsn.pp.filter.LinkPlot;
 public class KNNControl extends javax.swing.JFrame implements LinkInfoReciver {
 
     private final List<LinkKNN> knns;
-    private final HashMap<LinkKNN, LinkATMFFilter> atmfs;
+    private final HashMap<LinkKNN, Filter> atmfs;
     private final HashMap<LinkKNN, Map.Entry<Integer, Integer>> links;
     private final LinkFilter linkFilter;
     private final LinkedList<LinkInfo> data;
@@ -48,7 +49,7 @@ public class KNNControl extends javax.swing.JFrame implements LinkInfoReciver {
      */
     public KNNControl(LinkFilter lf) {
         this.knns = new ArrayList<LinkKNN>();
-        this.atmfs = new HashMap<LinkKNN, LinkATMFFilter>();
+        this.atmfs = new HashMap<LinkKNN, Filter>();
         this.links = new HashMap<LinkKNN, Entry<Integer, Integer>>();
         this.linkFilter = lf;
         this.data = new LinkedList<LinkInfo>();
@@ -59,7 +60,7 @@ public class KNNControl extends javax.swing.JFrame implements LinkInfoReciver {
         initComponents();
     }
 
-    public KNNControl addKNN(LinkKNN knn, LinkATMFFilter atmf, int source, int destination) {
+    public KNNControl addKNN(LinkKNN knn, Filter atmf, int source, int destination) {
         knns.add(knn);
         ((DefaultListModel) lstEstimate.getModel()).addElement(knn);
         this.atmfs.put(knn, atmf);
@@ -513,7 +514,7 @@ public class KNNControl extends javax.swing.JFrame implements LinkInfoReciver {
 
     private void btnATMFActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnATMFActionPerformed
         if ((LinkKNN) lstEstimate.getSelectedValue() != null) {
-            LinkATMFFilter atmf = atmfs.get((LinkKNN) lstEstimate.getSelectedValue());
+            Filter atmf = atmfs.get((Filter) lstEstimate.getSelectedValue());
             atmf.registerFilter(new LinkPlot("ATMF",atmf));
         }
     }//GEN-LAST:event_btnATMFActionPerformed

@@ -115,8 +115,8 @@ public class Datasource implements MessageListener {
             if (_MACOS) {
                 return;
             }
-            mote = new MoteIF(PrintStreamMessenger.err);
-            //mote = new MoteIF(BuildSource.makePhoenix("sf@192.168.178.39:9002", PrintStreamMessenger.err));
+            //mote = new MoteIF(PrintStreamMessenger.err);
+            mote = new MoteIF(BuildSource.makePhoenix("sf@192.168.178.39:9002", PrintStreamMessenger.err));
             mote.registerListener(new SnoopBCMsg(), this);
         } else {
             playRecording(file);

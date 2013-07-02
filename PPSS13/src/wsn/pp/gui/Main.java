@@ -28,13 +28,13 @@ public class Main implements MessageListener {
         
         SavitzkyGolay sg = new SavitzkyGolay(11, null);
         
-        LinkATMFFilter atmf = new LinkATMFFilter(30, 0.2f, null);
+        //LinkATMFFilter atmf = new LinkATMFFilter(30, 0.2f, null);
         
         LinkKNN knn = new LinkKNN(6, null);
 
         //atmf.registerFilter(visualGui);
         
-        atmf.registerFilter(knn);
+        //atmf.registerFilter(knn);
         sg.registerFilter(knn);
         
         //lf.registerLinkFilter(s, d, atmf);
