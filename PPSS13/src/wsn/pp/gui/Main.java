@@ -1,6 +1,7 @@
 package wsn.pp.gui;
 
 
+import wsn.pp.filter.SavitzkyGolay;
 import java.awt.Point;
 import net.tinyos.message.Message;
 import net.tinyos.message.MessageListener;
@@ -24,13 +25,25 @@ public class Main implements MessageListener {
     private final KNNControl knnc;
     
     private void addLink(int s, int d) {
-        LinkATMFFilter atmf = new LinkATMFFilter(11, 0.2f, null);
+        
+        SavitzkyGolay sg = new SavitzkyGolay(11, null);
+        
+        LinkATMFFilter atmf = new LinkATMFFilter(30, 0.2f, null);
+        
         LinkKNN knn = new LinkKNN(6, null);
 
         //atmf.registerFilter(visualGui);
+        
         atmf.registerFilter(knn);
-        lf.registerLinkFilter(s, d, atmf);
-        knnc.addKNN(knn,atmf,s,d);
+        sg.registerFilter(knn);
+        
+        //lf.registerLinkFilter(s, d, atmf);
+        lf.registerLinkFilter(s, d, sg);
+        
+        
+        //knnc.addKNN(knn,atmf,s,d);
+        
+        knnc.addKNN(knn,sg,s,d);
         knn.registerFilter(knnc);
     }
 

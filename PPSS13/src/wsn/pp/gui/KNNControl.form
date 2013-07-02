@@ -6,6 +6,7 @@
   </Properties>
   <SyntheticProperties>
     <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
+    <SyntheticProperty name="generateCenter" type="boolean" value="false"/>
   </SyntheticProperties>
   <AuxValues>
     <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
@@ -78,7 +79,7 @@
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Component id="txtFile" max="32767" attributes="0"/>
                                   </Group>
-                                  <Component id="btnPlay" alignment="0" max="32767" attributes="0"/>
+                                  <Component id="btnPlay" alignment="0" pref="419" max="32767" attributes="0"/>
                                   <Component id="btnTest" alignment="1" max="32767" attributes="0"/>
                               </Group>
                           </Group>
@@ -234,10 +235,12 @@
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="btnATMF" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
+                              <Component id="jButton1" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
                               <Component id="btnKNN" min="-2" max="-2" attributes="0"/>
                               <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                           </Group>
-                          <Component id="jScrollPane2" pref="664" max="32767" attributes="0"/>
+                          <Component id="jScrollPane2" pref="703" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
@@ -247,12 +250,13 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jScrollPane2" pref="333" max="32767" attributes="0"/>
+                      <Component id="jScrollPane2" pref="357" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="btnRaw" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="btnKNN" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="btnATMF" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="jButton1" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
@@ -306,6 +310,14 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnATMFActionPerformed"/>
               </Events>
             </Component>
+            <Component class="javax.swing.JButton" name="jButton1">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Savitzky Golay"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton1ActionPerformed"/>
+              </Events>
+            </Component>
           </SubComponents>
         </Container>
         <Container class="javax.swing.JPanel" name="jPanel3">
@@ -338,10 +350,10 @@
                           </Group>
                           <Group type="102" alignment="1" attributes="0">
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="lblStateWeighted" pref="482" max="32767" attributes="0"/>
-                                  <Component id="lblConfStatus" pref="482" max="32767" attributes="0"/>
-                                  <Component id="lblStatus" pref="482" max="32767" attributes="0"/>
-                                  <Component id="lblStateMissfire" pref="482" max="32767" attributes="0"/>
+                                  <Component id="lblStateWeighted" max="32767" attributes="0"/>
+                                  <Component id="lblConfStatus" max="32767" attributes="0"/>
+                                  <Component id="lblStatus" max="32767" attributes="0"/>
+                                  <Component id="lblStateMissfire" max="32767" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" max="-2" attributes="0">
@@ -390,7 +402,7 @@
                           <Component id="lblStateMissfire" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="lblSysMis" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace pref="43" max="32767" attributes="0"/>
+                      <EmptySpace pref="60" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -519,7 +531,7 @@
                           <Component id="jSpinner2" pref="66" max="32767" attributes="0"/>
                           <Component id="jSpinner1" max="32767" attributes="0"/>
                       </Group>
-                      <EmptySpace pref="553" max="32767" attributes="0"/>
+                      <EmptySpace pref="576" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -538,7 +550,7 @@
                           <Component id="jLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="jSpinner1" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace pref="307" max="32767" attributes="0"/>
+                      <EmptySpace pref="314" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
