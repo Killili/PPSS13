@@ -72,6 +72,7 @@ public class Datasource implements MessageListener {
             } catch (ClassNotFoundException ex) {
                 Logger.getLogger(Datasource.class.getName()).log(Level.SEVERE, null, ex);
             } catch (IOException e) {
+                System.out.println(file.getPath());
                 e.printStackTrace();
             }
             liveData = true;
