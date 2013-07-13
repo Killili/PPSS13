@@ -6,12 +6,13 @@ import java.awt.Point;
 import net.tinyos.message.Message;
 import net.tinyos.message.MessageListener;
 import wsn.pp.data.Datasource;
+import wsn.pp.filter.Filter;
 import wsn.pp.filter.LinkATMFFilter;
 import wsn.pp.filter.LinkFilter;
 import wsn.pp.filter.LinkKNN;
 import wsn.pp.messages.SnoopBCMsg;
 
-public class Main implements MessageListener {
+public class Main {
 
     /**
      * @param args
@@ -25,25 +26,13 @@ public class Main implements MessageListener {
     private final KNNControl knnc;
     
     private void addLink(int s, int d) {
-        
-        SavitzkyGolay sg = new SavitzkyGolay(11, null);
-        
-        //LinkATMFFilter atmf = new LinkATMFFilter(30, 0.2f, null);
+        //Filter fil = new LinkATMFFilter(30, 0.2f, null);
+        Filter fil = new SavitzkyGolay(11, null);
         
         LinkKNN knn = new LinkKNN(6, null);
-
-        //atmf.registerFilter(visualGui);
-        
-        //atmf.registerFilter(knn);
-        sg.registerFilter(knn);
-        
-        //lf.registerLinkFilter(s, d, atmf);
-        lf.registerLinkFilter(s, d, sg);
-        
-        
-        //knnc.addKNN(knn,atmf,s,d);
-        
-        knnc.addKNN(knn,sg,s,d);
+        fil.registerFilter(knn);
+        lf.registerLinkFilter(s, d, fil);
+        knnc.addKNN(knn,fil,s,d);
         knn.registerFilter(knnc);
     }
 
@@ -105,35 +94,5 @@ public class Main implements MessageListener {
          /*
          mote = new MoteIF(PrintStreamMessenger.err);
          mote.registerListener(new SnoopBCMsg(), this);*/
-    }
-
-    private Point[] getInitPoints(int amount) {
-        amount = Math.min(amount, 6);
-        Point[] result = new Point[6];
-        result[0] = new Point(30, 70);
-        result[1] = new Point(200, 40);
-        result[2] = new Point(400, 70);
-        result[3] = new Point(370, 300);
-        result[4] = new Point(200, 400);
-        result[5] = new Point(20, 300);
-
-        Point[] out = new Point[amount];
-        for (int i = 0; i < amount; i++) {
-            out[i] = result[i];
-        }
-        return out;
-    }
-
-    @Override
-    public void messageReceived(int arg0, Message arg1) {
-        //System.out.println("recieved");
-        if (arg1 instanceof SnoopBCMsg) {
-
-            SnoopBCMsg rssi = (SnoopBCMsg) arg1;
-
-            rssi.get_nodeid();
-            v.updateRssi(rssi.get_nodeid(), rssi.get_othernodes());
-        }
-
     }
 }

@@ -35,21 +35,21 @@ public class SavitzkyGolay extends Filter {
     @Override
     public void recvLinkInfo(LinkInfo ls) {
         //System.out.println("Recieved "+ls.power);
-        if (ls.getSourceNode() == 1 && ls.getDestinationNode() == 4) {
-            System.out.println(ls.power);
-        }
+        //if (ls.getSourceNode() == 1 && ls.getDestinationNode() == 4) {
+        //    System.out.println(ls.power);
+        //}
         shift(data);
         data[data.length - 1] = ls.power;
 
 
 
-        double[] coeffs = SGFilter.computeSGCoefficients(window, window, 6);
+        double[] coeffs = SGFilter.computeSGCoefficients(window, window, 8);
         double[] leftPad = left(data);
         ContinuousPadder padder1 = new ContinuousPadder();
         SGFilter sgFilter = new SGFilter(5, 5);
         sgFilter.appendPreprocessor(padder1);
 
-        double[] smooth = sgFilter.smooth(data, coeffs);
+        double[] smooth = sgFilter.smooth(right(data),left(data), new double[0], coeffs);
 
 
         double mean = 0, stddev = 0;
@@ -61,7 +61,8 @@ public class SavitzkyGolay extends Filter {
             stddev += (mean - value) * (mean - value);
         }
         stddev = Math.sqrt(stddev);
-
+        
+        ls = new LinkInfo(ls);
         ls.metaData.put("StdDev", stddev);
         ls.power = smooth[smooth.length - 1];
 
