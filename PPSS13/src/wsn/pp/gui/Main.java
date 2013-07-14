@@ -26,8 +26,8 @@ public class Main {
     private final KNNControl knnc;
     
     private void addLink(int s, int d) {
-        //Filter fil = new LinkATMFFilter(30, 0.2f, null);
-        Filter fil = new SavitzkyGolay(11, null);
+        Filter fil = new LinkATMFFilter(30, 0.2f, null);
+        //Filter fil = new SavitzkyGolay(11, null);
         
         LinkKNN knn = new LinkKNN(6, null);
         fil.registerFilter(knn);

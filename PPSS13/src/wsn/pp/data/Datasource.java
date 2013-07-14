@@ -8,6 +8,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.tinyos.message.Message;
@@ -32,6 +33,8 @@ import wsn.pp.messages.SnoopBCMsg;
 public class Datasource implements MessageListener {
 
     public static final boolean _MACOS = System.getProperty("os.name").equals("Mac OS X");
+    
+    
     private MoteIF mote;
     private final LinkInfoReciver slave;
     private ObjectOutputStream out;

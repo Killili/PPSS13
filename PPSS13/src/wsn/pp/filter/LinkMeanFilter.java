@@ -3,6 +3,7 @@ package wsn.pp.filter;
 
 import java.util.Collections;
 import java.util.LinkedList;
+import wsn.pp.data.ScienceTool;
 
 /*
  * To change this template, choose Tools | Templates
@@ -26,6 +27,11 @@ public class LinkMeanFilter extends Filter {
     }
     
     public void recvLinkInfo(LinkInfo ls) {
+          if(ScienceTool._SCIENCE)
+        {
+            window = (int)ScienceTool.getParameter("window");
+        }
+          
         data.addLast(ls.power);
         if(data.size() >= window){
             double mean = 0,error = 0;

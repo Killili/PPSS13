@@ -9,6 +9,7 @@ import java.util.LinkedList;
 import mr.go.sgfilter.ContinuousPadder;
 import mr.go.sgfilter.MeanValuePadder;
 import mr.go.sgfilter.SGFilter;
+import wsn.pp.data.ScienceTool;
 
 /**
  *
@@ -34,6 +35,8 @@ public class SavitzkyGolay extends Filter {
 
     @Override
     public void recvLinkInfo(LinkInfo ls) {
+        if(ScienceTool._SCIENCE)
+            window = (int) ScienceTool.getParameter("window");
         //System.out.println("Recieved "+ls.power);
         //if (ls.getSourceNode() == 1 && ls.getDestinationNode() == 4) {
         //    System.out.println(ls.power);

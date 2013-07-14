@@ -19,6 +19,7 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import wsn.pp.data.ScienceTool;
 import wsn.pp.gui.GNUPlot;
 import wsn.pp.gui.KNNControl;
 
@@ -90,6 +91,7 @@ public class LinkKNN extends Filter implements Plotable {
             }
         }
         Collections.sort(list);
+        
         if (list.size() > k) {
             list = list.subList(0, k);
         }
@@ -112,6 +114,8 @@ public class LinkKNN extends Filter implements Plotable {
         }
 
         DataPoint current = new DataPoint("Current", new Point(ls.power, (Double) ls.metaData.get("StdDev")));
+        if(ScienceTool._SCIENCE)
+            k = (int)ScienceTool.getParameter("knn");
         List<Neighbores> neighbores = findNearestNeighbores(current);
 
         if (neighbores.size() >= k) {
@@ -179,7 +183,9 @@ public class LinkKNN extends Filter implements Plotable {
         if (this.knnControl != null) {
             knnControl.updateKNN(this);
         }
-
+        
+        if(ScienceTool._SCIENCE)
+            ScienceTool.addLinkInfor(ls);
         super.recvLinkInfo(ls);
     }
 
@@ -233,7 +239,7 @@ public class LinkKNN extends Filter implements Plotable {
         testingType = null;
     }
 
-    private static class DataPoint {
+    public static class DataPoint {
 
         public String Type;
         public Point position;
@@ -250,9 +256,16 @@ public class LinkKNN extends Filter implements Plotable {
         public void div(double div) {
             this.position.div(div);
         }
+
+        @Override
+        public String toString() {
+            return Type+","+position;
+        }
+        
+        
     }
 
-    private static class Point {
+    public static class Point {
 
         public double x, y;
 
@@ -274,9 +287,16 @@ public class LinkKNN extends Filter implements Plotable {
             this.x /= div;
             this.y /= div;
         }
+
+        @Override
+        public String toString() {
+        return x+","+y;
+        }
+        
+        
     }
 
-    private static class Neighbores implements Comparable<Neighbores> {
+    public static class Neighbores implements Comparable<Neighbores> {
 
         public DataPoint data;
         public double distance;
@@ -296,5 +316,12 @@ public class LinkKNN extends Filter implements Plotable {
                 return 0;
             }
         }
+
+        @Override
+        public String toString() {
+            return data.toString() +","+distance;
+        }
+        
+        
     }
 }

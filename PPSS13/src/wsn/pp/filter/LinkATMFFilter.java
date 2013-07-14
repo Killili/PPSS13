@@ -6,6 +6,7 @@ package wsn.pp.filter;
 
 import java.util.Collections;
 import java.util.LinkedList;
+import wsn.pp.data.ScienceTool;
 
 /**
  *
@@ -15,7 +16,7 @@ public class LinkATMFFilter extends Filter {
     private LinkedList<Double> data = new LinkedList<Double>();
     private int window;
     private LinkInfoReciver lsr;
-    private final float alpha;
+    private float alpha;
 
     public LinkATMFFilter(int window, float alpha, LinkInfoReciver lsr){
         super(lsr);
@@ -25,6 +26,14 @@ public class LinkATMFFilter extends Filter {
     
     @Override
     public void recvLinkInfo(LinkInfo ls) {
+        
+        
+        if(ScienceTool._SCIENCE)
+        {
+            window = (int)ScienceTool.getParameter("window");
+            alpha = (int)ScienceTool.getParameter("alpha");
+        }
+        
         data.addLast(ls.power);
         if(data.size() >= window){
             LinkedList<Double> clone = (LinkedList<Double>) data.clone();

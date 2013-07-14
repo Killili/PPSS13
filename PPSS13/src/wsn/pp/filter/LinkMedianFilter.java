@@ -7,6 +7,7 @@ package wsn.pp.filter;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
+import wsn.pp.data.ScienceTool;
 
 /**
  *
@@ -26,6 +27,10 @@ public class LinkMedianFilter extends Filter {
 
     @Override
     public void recvLinkInfo(LinkInfo ls) {
+          if(ScienceTool._SCIENCE)
+        {
+            window = (int)ScienceTool.getParameter("window");
+        }
         data.addLast(ls.power);
         if (data.size() >= window) {
             LinkedList<Double> clone = (LinkedList<Double>) data.clone();
