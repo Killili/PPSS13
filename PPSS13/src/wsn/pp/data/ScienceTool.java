@@ -9,6 +9,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -68,9 +69,9 @@ public class ScienceTool {
        
        if(li.getMetaData().containsKey("Neighbores"))
        {
-           LinkedList<LinkKNN.Neighbores> b = (LinkedList<LinkKNN.Neighbores>)li.getMetaData().get("Neighbores");
+        
            int i = 1;
-           for(LinkKNN.Neighbores n:b)
+           for(LinkKNN.Neighbores n:(List<LinkKNN.Neighbores>)li.getMetaData().get("Neighbores"))
            {
            li.getMetaData().remove("Neighbores");
            li.getMetaData().put("Neighbore("+i+") Distance", n.distance);

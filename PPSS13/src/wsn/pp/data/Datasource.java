@@ -32,7 +32,7 @@ import wsn.pp.messages.SnoopBCMsg;
  */
 public class Datasource implements MessageListener {
 
-    public static final boolean _MACOS = System.getProperty("os.name").equals("Mac OS X");
+    public static final boolean _MACOS = true;//System.getProperty("os.name").equals("Mac OS X");
     
     
     private MoteIF mote;

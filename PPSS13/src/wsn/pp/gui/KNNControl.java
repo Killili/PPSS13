@@ -137,7 +137,7 @@ public class KNNControl extends javax.swing.JFrame implements LinkInfoReciver {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         lstTypes.setModel(new javax.swing.AbstractListModel() {
-            String[] strings = { "Empty", "Standing-A", "Standing-B", "Standing-C", "Standing-D", "Standing-E", "Standing-F", "Moving-Top", "Moving-Bottum", " " };
+            String[] strings = { "Empty", "Standing-Top", "Standing-Bottum", "Moving-Top", "Moving-Bottum", " " };
             public int getSize() { return strings.length; }
             public Object getElementAt(int i) { return strings[i]; }
         });
@@ -339,7 +339,7 @@ public class KNNControl extends javax.swing.JFrame implements LinkInfoReciver {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnSaveStatisticData)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 171, Short.MAX_VALUE)
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 198, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -397,7 +397,7 @@ public class KNNControl extends javax.swing.JFrame implements LinkInfoReciver {
                         .addComponent(btnSavitzky)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnKNN)
-                        .addGap(0, 0, Short.MAX_VALUE))
+                        .addGap(0, 585, Short.MAX_VALUE))
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 867, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -475,7 +475,7 @@ public class KNNControl extends javax.swing.JFrame implements LinkInfoReciver {
                             .addComponent(jLabel7)
                             .addComponent(jLabel8)
                             .addComponent(jLabel9))
-                        .addGap(0, 164, Short.MAX_VALUE))
+                        .addGap(0, 253, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(lblStateWeighted, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -519,7 +519,7 @@ public class KNNControl extends javax.swing.JFrame implements LinkInfoReciver {
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblStateMissfire)
                     .addComponent(lblSysMis))
-                .addContainerGap(242, Short.MAX_VALUE))
+                .addContainerGap(249, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("System State", jPanel3);
@@ -558,7 +558,7 @@ public class KNNControl extends javax.swing.JFrame implements LinkInfoReciver {
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jSpinner2, javax.swing.GroupLayout.DEFAULT_SIZE, 66, Short.MAX_VALUE)
                     .addComponent(jSpinner1))
-                .addContainerGap(740, Short.MAX_VALUE))
+                .addContainerGap(760, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -573,7 +573,7 @@ public class KNNControl extends javax.swing.JFrame implements LinkInfoReciver {
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
                     .addComponent(jSpinner1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(496, Short.MAX_VALUE))
+                .addContainerGap(513, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Options", jPanel4);
@@ -813,7 +813,6 @@ public class KNNControl extends javax.swing.JFrame implements LinkInfoReciver {
     private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JSpinner jSpinner1;
     private javax.swing.JSpinner jSpinner2;

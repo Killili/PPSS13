@@ -53,7 +53,7 @@ public class Main {
         //Thread t = new Thread(visualGui = new VisualGuiControl(null, null, loggin));
         //t.start();
 
-        int[] motes = {1,2,3,4,5};
+        int[] motes = {1,2,3,4,5,6,7};
 
         for (int i : motes) {
             for (int j = 0; j < 10; j++) {
