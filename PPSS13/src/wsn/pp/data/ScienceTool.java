@@ -157,8 +157,12 @@ public class ScienceTool {
        
        if(toPlot!=null)
             output +=getParameterLinked(toPlot);
+       int i = 0;
        for(HashMap<String, Object> tv:values.values())
        {
+           i++;
+           if(i>=500)
+               break;
            if(toPlot!=null)
            {
                header = true;
@@ -288,8 +292,13 @@ public class ScienceTool {
     }
 
     public static void saveAll(String fileName, LinkedList<String> toPlot) {
+        int i=0;
         for(String s:informations.keySet())
+        {
+            i++;
+            System.out.println("Saving file "+i+"/"+informations.keySet().size());
            saveLink(s,"logs/"+fileName+"("+getParameterValueList().replace("\t", ":")+")/"+s+".txt",toPlot);
+        }
     }
 
     private static String getParameterLinked(LinkedList<String> toPlot) {
