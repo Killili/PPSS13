@@ -73,7 +73,7 @@ public class ScienceTool {
            int i = 1;
            for(LinkKNN.Neighbores n:(List<LinkKNN.Neighbores>)li.getMetaData().get("Neighbores"))
            {
-           li.getMetaData().remove("Neighbores");
+           //li.getMetaData().remove("Neighbores");
            li.getMetaData().put("Neighbore("+i+") Distance", n.distance);
            
            LinkKNN.DataPoint d = n.data;
@@ -87,7 +87,7 @@ public class ScienceTool {
        
        if(li.getMetaData().containsKey("Datapoint"))
        {
-           li.getMetaData().remove("Datapoint");
+           //li.getMetaData().remove("Datapoint");
            LinkKNN.DataPoint d = (LinkKNN.DataPoint)li.getMetaData().get("Datapoint");
            if(d!=null)
            {
@@ -130,8 +130,13 @@ public class ScienceTool {
    
    public static void saveAll(String fileName)
    {
+       int i = 1;
        for(String s:informations.keySet())
+       {
+           System.out.println("Saving file "+i+"/"+informations.keySet().size());
            saveLink(s,"logs/"+fileName+"("+getParameterValueList().replace("\t", ":")+")/"+s+".txt",null);
+           i++;
+       }
    }
    
    /**
@@ -140,6 +145,7 @@ public class ScienceTool {
     */
    public static void saveLink(String link,String fileName,LinkedList<String> toPlot)
    {
+       System.out.println("Saving link "+link);
        HashMap<Long, HashMap<String, Object>> values = informations.get(link);
        String output;
        output = getParameterValueList()+"\n";
@@ -180,6 +186,10 @@ public class ScienceTool {
                    value = "not set";
                else
                    
+                   
+                       
+                   if(!t.equals("time"))
+                   {
                    try
                    {
                        value = Double.parseDouble((String)value);
@@ -188,6 +198,8 @@ public class ScienceTool {
                        value = Double.toString((Double)value).replace(".", ",");
                    }
                     catch(Exception e){};
+                   }
+                   
                     
                    output += value +"\t";
            }
@@ -265,7 +277,11 @@ public class ScienceTool {
             checkParameterList();
             parameterModel = new DefaultComboBoxModel();
             for(String v:parameters.keySet())
+            {
+                if(v.equals("Neighbore")|| v.equals("Datapoint"))
+                    continue;
                 parameterModel.addElement(v);
+            }
        }
         System.out.println(parameterModel.getSize());
         return parameterModel;
