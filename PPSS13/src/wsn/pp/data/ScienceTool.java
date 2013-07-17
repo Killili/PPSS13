@@ -29,7 +29,13 @@ public class ScienceTool {
    public static DefaultComboBoxModel metaDataModel;
    
    public static final boolean _SCIENCE = true;
+   public static final boolean _HEAVY_SCIENCE = false; //takes lootsss of ram
     private static LinkedList<String> labelsSave = new LinkedList<String>();
+    private static HashMap<String,Float> lastSystemTestPoints;
+    private static HashMap<String,HashMap<String, Float>> lastSystemTestScore;
+    private static HashMap<String, HashMap<String, Integer>> systemStateChangeds;
+    private static HashMap<String, HashMap<String, String>> lastState;
+    private static float state;
    
    
    public static void clearAll()
@@ -161,7 +167,7 @@ public class ScienceTool {
        for(HashMap<String, Object> tv:values.values())
        {
            i++;
-           if(i>=500)
+           if(i>=getParameter("PlotAmount"))
                break;
            if(toPlot!=null)
            {
@@ -254,6 +260,8 @@ public class ScienceTool {
            parameters.put("knn", 6.0);
            parameters.put("window", 30.0);
            parameters.put("alpha", 0.2);
+           parameters.put("trustThreshold", 0.1);
+           parameters.put("PlotAmount", 500.);
        }
        
    }
@@ -299,6 +307,54 @@ public class ScienceTool {
             System.out.println("Saving file "+i+"/"+informations.keySet().size());
            saveLink(s,"logs/"+fileName+"("+getParameterValueList().replace("\t", ":")+")/"+s+".txt",toPlot);
         }
+        saveSystemState("logs/"+fileName+"("+getParameterValueList().replace("\t", ":")+")/"+"SystemState"+".txt");
+        
+    }
+    
+    private static void saveSystemState(String filename)
+    {
+        String out = getParameterValueList()+"\n";
+        out+="Changed per state \n";
+        out+="\t Mayority \t Confidence \t Weight \t Missfire \n";
+        for(String systemTestType:systemStateChangeds.keySet())
+        {
+            for(String meth:systemStateChangeds.get(systemTestType).keySet())
+            {
+                out+=systemStateChangeds.get(systemTestType).get(meth)+"\t";
+            }
+            out+="\n";
+        }
+        out+="\n";
+        out+="\n";
+        out+="\t Mayority \t Confidence \t Weight \t Missfire \n";
+        for(String s:lastSystemTestPoints.keySet())
+        {
+        out+="\t"+s+"\t";
+        out+=( String.format("%.3f",(lastSystemTestScore.get(s).get("Mayority") / lastSystemTestPoints.get(s)) ));
+        out+="\t";
+        out+=( String.format("%.3f",(lastSystemTestScore.get(s).get("Confidence") / lastSystemTestPoints.get(s)) ));
+        out+="\t";
+        out+=( String.format("%.3f",(lastSystemTestScore.get(s).get("Weight") / lastSystemTestPoints.get(s)) ));
+        out+="\t";
+        out+=(String.format("%.3f",(lastSystemTestScore.get(s).get("Missfire") / lastSystemTestPoints.get(s)) ));
+        out+="\n";
+        }
+    
+    File f = new File(filename);
+      
+       try {
+           if (!f.getParentFile().exists())
+                f.getParentFile().mkdirs();
+           
+           if (!f.exists())
+                f.createNewFile();
+           FileWriter w = new FileWriter(f);
+           w.write(out);
+           w.flush();
+           w.close();
+       } catch (IOException ex) {
+           Logger.getLogger(ScienceTool.class.getName()).log(Level.SEVERE, null, ex);
+       }
     }
 
     private static String getParameterLinked(LinkedList<String> toPlot) {
@@ -310,4 +366,28 @@ public class ScienceTool {
        out+="\n";
        return out;
     }
+
+    public static void addSystemTestScroe(String state ,HashMap<String, Float> systemTestScores, float systemTestPoints) {
+        
+        
+        if(lastSystemTestPoints == null)
+            lastSystemTestPoints = new HashMap<String, Float>();
+        
+        if(lastSystemTestPoints.containsKey(state))
+            lastSystemTestPoints.remove(state);
+        
+        if(lastSystemTestScore == null)
+            lastSystemTestScore = new HashMap<String,HashMap<String, Float>>();
+       if(lastSystemTestScore.containsKey(state))
+           lastSystemTestScore.remove(state);
+        
+        lastSystemTestScore.put(state,systemTestScores);
+        lastSystemTestPoints.put(state,systemTestPoints);
+    }
+
+    public static void addSystemMethodeVariance(HashMap<String, HashMap<String, Integer>> systemStateChanged,float states) {
+      state =states;
+        systemStateChangeds = systemStateChanged;
+    }
+    
 }

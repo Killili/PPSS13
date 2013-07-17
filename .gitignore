@@ -5,3 +5,4 @@
 *.ear
 /PPSS13/build/
 /PPSS13/dist/
+*.txt

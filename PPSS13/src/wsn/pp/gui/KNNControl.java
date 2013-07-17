@@ -45,6 +45,8 @@ public class KNNControl extends javax.swing.JFrame implements LinkInfoReciver {
     private String systemTestType;
     private HashMap<String, Float> systemTestScores;
     private float systemTestPoints;
+    private HashMap<String,HashMap<String, String>> LastState;
+    private HashMap<String,HashMap<String, Integer>> systemStateChanged;
 
     /**
      * Creates new form KNNControl
@@ -704,6 +706,12 @@ public class KNNControl extends javax.swing.JFrame implements LinkInfoReciver {
         lblSysWe.setText( String.format("%.3f",(systemTestScores.get("Weight") / systemTestPoints) ));
         lblSysMis.setText(String.format("%.3f",(systemTestScores.get("Missfire") / systemTestPoints) ));
         
+        if(ScienceTool._SCIENCE)
+        {
+            ScienceTool.addSystemTestScroe((String)(lstTypes.getSelectedValue()),systemTestScores,systemTestPoints);
+            ScienceTool.addSystemMethodeVariance(systemStateChanged,systemTestPoints);
+        }
+        
     }//GEN-LAST:event_btnPlayActionPerformed
 
     private void btnTestActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTestActionPerformed
@@ -724,7 +732,7 @@ public class KNNControl extends javax.swing.JFrame implements LinkInfoReciver {
 
     private void btnSaveStatisticDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveStatisticDataActionPerformed
         LinkedList<String> toPlot = new LinkedList<String>();
-        toPlot.addAll(jlDatas.getSelectedValuesList());
+        toPlot.addAll(jlDatas.getSelectedValuesList());        
         ScienceTool.saveAll(tfStatistic.getText(),toPlot);
     }//GEN-LAST:event_btnSaveStatisticDataActionPerformed
 
@@ -902,7 +910,11 @@ public class KNNControl extends javax.swing.JFrame implements LinkInfoReciver {
                 if((Float)li.getMetaData().get("KNNStateMissfired") == null ) return;
                 
                 float trust = (Float)(li.getMetaData().get("KNNStateMissfired")) / (Float)(li.getMetaData().get("KNNTotalMissfired"));
-                if( trust < 0.1f ) continue;
+               
+                float trustThreshold = 0.1f;
+                if(ScienceTool._SCIENCE)
+                    trustThreshold = (float)ScienceTool.getParameter("trustThreshold");
+                if( trust < trustThreshold ) continue;
                 
                 if (counter.containsKey(key)) {
                     Float tmp = counter.get(key);
@@ -918,10 +930,48 @@ public class KNNControl extends javax.swing.JFrame implements LinkInfoReciver {
             
             if(systemTestType != null){
                 systemTestPoints += 1;
+
+             if(ScienceTool._SCIENCE && false)
+            {  
+                if(systemStateChanged== null)
+                    systemStateChanged = new HashMap<String, HashMap<String, Integer>>();
+                if(LastState == null)
+                    LastState = new HashMap<String, HashMap<String, String>>();
+                if(!LastState.containsKey(systemTestType))
+                    LastState.put(systemTestType, new HashMap<String, String>());
+                if(!systemStateChanged.containsKey(systemTestType))
+                    systemStateChanged.put(systemTestType, new HashMap<String, Integer>());
+                
+                
+             if(LastState.get(systemTestType).get("Mayority")==null||LastState.get(systemTestType).get("Mayority").equals(bestHitMa.getKey()))
+                systemStateChanged.get(systemTestType).put(("Mayority"), systemStateChanged.get(systemTestType).get("Mayority")+1);
+             if(LastState.get(systemTestType).get("Confidence")==null||LastState.get(systemTestType).get("Confidence").equals(bestHitCo.getKey()))
+                systemStateChanged.get(systemTestType).put(("Confidence"), systemStateChanged.get(systemTestType).get("Confidence")+1);
+             if(LastState.get(systemTestType).get("Weight")==null||LastState.get(systemTestType).get("Weight").equals(bestHitWe.getKey()))
+                systemStateChanged.get(systemTestType).put(("Weight"), systemStateChanged.get(systemTestType).get("Weight")+1);
+             if(LastState.get(systemTestType).get("Missfire")==null||LastState.get(systemTestType).get("Missfire").equals(bestHitMf.getKey()))
+                systemStateChanged.get(systemTestType).put(("Missfire"), systemStateChanged.get(systemTestType).get("Missfire")+1);
+            }
+                
                 if( bestHitMa.getKey().equals( systemTestType ) )systemTestScores.put("Mayority", systemTestScores.get("Mayority") + 1);
                 if( bestHitCo.getKey().equals( systemTestType ) )systemTestScores.put("Confidence", systemTestScores.get("Confidence") + 1);
                 if( bestHitWe.getKey().equals( systemTestType ) )systemTestScores.put("Weight", systemTestScores.get("Weight") + 1);
                 if( bestHitMf.getKey().equals( systemTestType ) )systemTestScores.put("Missfire", systemTestScores.get("Missfire") + 1);
+            
+            if(ScienceTool._SCIENCE && false)
+            {  
+            LastState.remove("Mayority");
+            LastState.get(systemTestType).put("Mayority",bestHitMa.getKey());
+            
+            LastState.remove("Confidence");
+            LastState.get(systemTestType).put("Confidence",bestHitCo.getKey());
+            
+            LastState.remove("Weight");
+            LastState.get(systemTestType).put("Weight",bestHitWe.getKey());
+            
+            LastState.remove("Missfire");
+            LastState.get(systemTestType).put("Missfire",bestHitMf.getKey());
+            }
             }
         }
     }
