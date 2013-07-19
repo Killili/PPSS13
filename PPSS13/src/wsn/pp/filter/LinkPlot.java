@@ -37,10 +37,10 @@ public class LinkPlot extends Filter implements Plotable {
 
             @Override
             public void windowClosing(WindowEvent e) {
-                if( lf instanceof LinkFilter){
-                    ((LinkFilter)lf).removeFilter(LinkPlot.this);
+                if (lf instanceof LinkFilter) {
+                    ((LinkFilter) lf).removeFilter(LinkPlot.this);
                 } else if (lf instanceof Filter) {
-                    ((Filter)lf).removeFilter(LinkPlot.this);
+                    ((Filter) lf).removeFilter(LinkPlot.this);
                 }
             }
 
@@ -68,12 +68,12 @@ public class LinkPlot extends Filter implements Plotable {
     }
 
     public LinkPlot(String title, Object lf) {
-        this(title,lf, null);
+        this(title, lf, null);
     }
 
     @Override
     public void recvLinkInfo(LinkInfo ls) {
-        synchronized(data){
+        synchronized (data) {
             data.add(ls);
         }
         sourceNode = ls.getSourceNode();
@@ -83,12 +83,18 @@ public class LinkPlot extends Filter implements Plotable {
     @Override
     public String getPlotString() {
         String dataString = "";
-        synchronized(data){
-            for (LinkInfo i : data) {
-                dataString += i.timestamp + " " + i.power + "\n";
+        synchronized (data) {
+            if (data.size() > 0 && data.get(0).getMetaData().containsKey("StdDev")) {
+                for (LinkInfo i : data) {
+                    dataString += i.timestamp + " " + i.power + " " + (Double) i.getMetaData().get("StdDev") + "\n";
+                }
+                return "set terminal png\n set yrange [" + maxy + ":" + miny + "] \n plot '-' u 1:2:($3/2) title \"" + this.title + "( " + sourceNode + " -> " + destinationNode + " )\" with yerr, '-' u 1:2 title 'power' w fsteps\n" + dataString + "e\n" + dataString + "e\nquit\n";
+            } else {
+                for (LinkInfo i : data) {
+                    dataString += i.timestamp + " " + i.power + "\n";
+                }
+                return "set terminal png\n set yrange [" + maxy + ":" + miny + "] \n plot '-' title \"" + this.title + "( " + sourceNode + " -> " + destinationNode + " )\" with linespoints\n" + dataString + "e\nquit\n";
             }
         }
-        return "set terminal png\n set yrange [" + maxy + ":" + miny + "] \n plot '-' title \"" + this.title + "( " + sourceNode + " -> " + destinationNode + " )\" with linespoints\n" + dataString + "e\nquit\n";
-
     }
 }

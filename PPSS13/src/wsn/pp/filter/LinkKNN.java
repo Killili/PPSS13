@@ -153,6 +153,9 @@ public class LinkKNN extends Filter implements Plotable {
                 totalPointsForMissfireRating += 1;
                 if (estimatedType.equals(testingType)) {
                     testingScore += 1;
+                    if (!missfireWeights.containsKey(testingType)){
+                        missfireWeights.put(testingType, 0f);
+                    }
                 } else {
                     missfirePoints += 1;
                     if (missfireWeights.containsKey(testingType)) {

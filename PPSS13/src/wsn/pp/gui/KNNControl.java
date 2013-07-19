@@ -62,10 +62,11 @@ public class KNNControl extends javax.swing.JFrame implements LinkInfoReciver {
         systemTestScores.put("Confidence", 0f);
         systemTestScores.put("Weight", 0f);
         systemStateChanged = new HashMap<String, HashMap<String, Integer>>();
-        
+
         initComponents();
-        if(ScienceTool._SCIENCE)
+        if (ScienceTool._SCIENCE) {
             btnSaveStatisticData.setVisible(ScienceTool._SCIENCE);
+        }
     }
 
     public KNNControl addKNN(LinkKNN knn, Filter atmf, int source, int destination) {
@@ -639,11 +640,10 @@ public class KNNControl extends javax.swing.JFrame implements LinkInfoReciver {
         }
     }//GEN-LAST:event_btnLearnActionPerformed
 
-    private void btnSavitzkyActionPerformed(java.awt.event.ActionEvent evt)
-    {
+    private void btnSavitzkyActionPerformed(java.awt.event.ActionEvent evt) {
         ;
     }
-    
+
     private void btnForgetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnForgetActionPerformed
         if (lstTypes.getSelectedIndex() < 0) {
             return;
@@ -665,14 +665,14 @@ public class KNNControl extends javax.swing.JFrame implements LinkInfoReciver {
     private void btnRawActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRawActionPerformed
         if ((LinkKNN) lstEstimate.getSelectedValue() != null) {
             Entry<Integer, Integer> tmp = links.get((LinkKNN) lstEstimate.getSelectedValue());
-            linkFilter.registerLinkFilter(tmp.getKey(), tmp.getValue(), new LinkPlot("Raw",linkFilter));
+            linkFilter.registerLinkFilter(tmp.getKey(), tmp.getValue(), new LinkPlot("Raw", linkFilter));
         }
     }//GEN-LAST:event_btnRawActionPerformed
 
     private void btnATMFActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnATMFActionPerformed
         if ((LinkKNN) lstEstimate.getSelectedValue() != null) {
             Filter atmf = atmfs.get((Filter) lstEstimate.getSelectedValue());
-            atmf.registerFilter(new LinkPlot("ATMF",atmf));
+            atmf.registerFilter(new LinkPlot("ATMF", atmf));
         }
     }//GEN-LAST:event_btnATMFActionPerformed
 
@@ -720,44 +720,41 @@ public class KNNControl extends javax.swing.JFrame implements LinkInfoReciver {
         }
     }//GEN-LAST:event_btnPlaybackActionPerformed
 
-    public void btnPlayAction()
-    {
-          File file = new File("data/" + txtFile.getText());
-        systemTestScores = new HashMap<String,Float>();
+    public void btnPlayAction() {
+        File file = new File("data/" + txtFile.getText());
+        systemTestScores = new HashMap<String, Float>();
         systemTestScores.put("Mayority", 0f);
         systemTestScores.put("Confidence", 0f);
         systemTestScores.put("Weight", 0f);
         systemTestScores.put("Missfire", 0f);
-        systemTestPoints = 1f;
+        systemTestPoints = 0f;
         systemTestType = (String) lstTypes.getSelectedValue();
-        systemStateChanged =  new HashMap<String, HashMap<String, Integer>>();
-        
-        
+        systemStateChanged = new HashMap<String, HashMap<String, Integer>>();
+        systemTestPoints = 0;
+
         Datasource.getInstance().playRecording(file);
-        
-        lblSysMa.setText( String.format("%.3f",(systemTestScores.get("Mayority") / systemTestPoints) ));
-        lblSysCo.setText( String.format("%.3f",(systemTestScores.get("Confidence") / systemTestPoints) ));
-        lblSysWe.setText( String.format("%.3f",(systemTestScores.get("Weight") / systemTestPoints) ));
-        lblSysMis.setText(String.format("%.3f",(systemTestScores.get("Missfire") / systemTestPoints) ));
-        
-        if(ScienceTool._SCIENCE)
-        {
-            ScienceTool.addSystemTestScroe((String)(lstTypes.getSelectedValue()),systemTestScores,systemTestPoints);
-            ScienceTool.addSystemMethodeVariance(systemStateChanged,systemTestPoints);
+
+        lblSysMa.setText(String.format("%.3f", (systemTestScores.get("Mayority") / systemTestPoints)));
+        lblSysCo.setText(String.format("%.3f", (systemTestScores.get("Confidence") / systemTestPoints)));
+        lblSysWe.setText(String.format("%.3f", (systemTestScores.get("Weight") / systemTestPoints)));
+        lblSysMis.setText(String.format("%.3f", (systemTestScores.get("Missfire") / systemTestPoints)));
+
+        if (ScienceTool._SCIENCE) {
+            ScienceTool.addSystemTestScroe((String) (lstTypes.getSelectedValue()), systemTestScores, systemTestPoints);
+            ScienceTool.addSystemMethodeVariance(systemStateChanged, systemTestPoints);
         }
         if (lstTypes.getSelectedIndex() < lstTypes.getModel().getSize()) {
             lstTypes.setSelectedIndex(lstTypes.getSelectedIndex() + 1);
         }
     }
     private void btnPlayActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPlayActionPerformed
-      btnPlayAction();
-        
+        btnPlayAction();
+
     }//GEN-LAST:event_btnPlayActionPerformed
 
-    private void btnTestAction()
-    {
-        
-      File file = new File("data/" + txtFile.getText());
+    private void btnTestAction() {
+
+        File file = new File("data/" + txtFile.getText());
         if (file.exists()) {
             for (LinkKNN knn : knns) {
                 knn.testType((String) lstTypes.getSelectedValue());
@@ -770,29 +767,28 @@ public class KNNControl extends javax.swing.JFrame implements LinkInfoReciver {
         if (lstTypes.getSelectedIndex() < lstTypes.getModel().getSize()) {
             lstTypes.setSelectedIndex(lstTypes.getSelectedIndex() + 1);
         }
-    }                             
-    
+    }
+
     private void btnTestActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTestActionPerformed
         btnTestAction();
     }//GEN-LAST:event_btnTestActionPerformed
 
     private void btnSaveStatisticDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveStatisticDataActionPerformed
         LinkedList<String> toPlot = new LinkedList<String>();
-        toPlot.addAll(jlDatas.getSelectedValuesList());        
-        ScienceTool.saveAll(tfStatistic.getText(),toPlot);
+        toPlot.addAll(jlDatas.getSelectedValuesList());
+        ScienceTool.saveAll(tfStatistic.getText(), toPlot);
     }//GEN-LAST:event_btnSaveStatisticDataActionPerformed
 
     private void cbParameterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbParameterActionPerformed
-        tfParameter.setText(String.valueOf(ScienceTool.getParameter((String)cbParameter.getSelectedItem())));
+        tfParameter.setText(String.valueOf(ScienceTool.getParameter((String) cbParameter.getSelectedItem())));
     }//GEN-LAST:event_cbParameterActionPerformed
 
     private void btnChangeParameterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnChangeParameterActionPerformed
-        if(tfParameter.getText().length()>0)
-        {
+        if (tfParameter.getText().length() > 0) {
             String text = tfParameter.getText();
-            text =text.replace(",", ".");
+            text = text.replace(",", ".");
             double value = Double.parseDouble(text);
-            ScienceTool.setParameter((String)cbParameter.getSelectedItem(), value);
+            ScienceTool.setParameter((String) cbParameter.getSelectedItem(), value);
         }
     }//GEN-LAST:event_btnChangeParameterActionPerformed
 
@@ -801,7 +797,6 @@ public class KNNControl extends javax.swing.JFrame implements LinkInfoReciver {
     }//GEN-LAST:event_txtPatternActionPerformed
 
     private void txtPatternCaretPositionChanged(java.awt.event.InputMethodEvent evt) {//GEN-FIRST:event_txtPatternCaretPositionChanged
-       
     }//GEN-LAST:event_txtPatternCaretPositionChanged
 
     private void txtPatternKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtPatternKeyTyped
@@ -811,57 +806,52 @@ public class KNNControl extends javax.swing.JFrame implements LinkInfoReciver {
     private void btnLearnCompleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLearnCompleteActionPerformed
 
         ScienceTool.clearAll();
-        while(lstTypes.getSelectedIndex() < lstTypes.getModel().getSize()-1)
-        {
-            System.out.println("learning "+txtFile.getText());
-        File file = new File("data/"+ txtFile.getText());
-        
-        if (file.exists()) {
-            for (LinkKNN knn : knns) {
-                knn.learnType((String) lstTypes.getSelectedValue());
+        while (lstTypes.getSelectedIndex() < lstTypes.getModel().getSize() - 1) {
+            System.out.println("learning " + txtFile.getText());
+            File file = new File("data/" + txtFile.getText());
+
+            if (file.exists()) {
+                for (LinkKNN knn : knns) {
+                    knn.learnType((String) lstTypes.getSelectedValue());
+                }
+                Datasource.getInstance().playRecording(file);
+                for (LinkKNN knn : knns) {
+                    knn.stopLearning();
+                }
             }
-            Datasource.getInstance().playRecording(file);
-            for (LinkKNN knn : knns) {
-                knn.stopLearning();
+            //Switches the Gui
+            if (lstTypes.getSelectedIndex() < lstTypes.getModel().getSize()) {
+                lstTypes.setSelectedIndex(lstTypes.getSelectedIndex() + 1);
+
             }
-        }
-        //Switches the Gui
-        if (lstTypes.getSelectedIndex() < lstTypes.getModel().getSize()) {
-            lstTypes.setSelectedIndex(lstTypes.getSelectedIndex() + 1);
-            
-        }    
         }
         jlDatas.updateUI();
         jlDatas.setSelectionInterval(0, jlDatas.getModel().getSize());
     }//GEN-LAST:event_btnLearnCompleteActionPerformed
 
     private void btnCompleteTesteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCompleteTesteActionPerformed
-    btnLearnCompleteActionPerformed(evt); 
-    lstTypes.setSelectedIndex(0);
-    while(lstTypes.getSelectedIndex() < lstTypes.getModel().getSize()-1)
-        {
+        btnLearnCompleteActionPerformed(evt);
+        lstTypes.setSelectedIndex(0);
+        while (lstTypes.getSelectedIndex() < lstTypes.getModel().getSize() - 1) {
             System.out.println("training data");
             btnTestAction();
         }
-    
-    lstTypes.setSelectedIndex(0);
-    while(lstTypes.getSelectedIndex() < lstTypes.getModel().getSize()-1)
-        {
+
+        lstTypes.setSelectedIndex(0);
+        while (lstTypes.getSelectedIndex() < lstTypes.getModel().getSize() - 1) {
             System.out.println("replay data");
-              btnPlayAction();
+            btnPlayAction();
         }
-    
+
     }//GEN-LAST:event_btnCompleteTesteActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         lstTypes.setSelectedIndex(0);
-    while(lstTypes.getSelectedIndex() < lstTypes.getModel().getSize()-1)
-        {
+        while (lstTypes.getSelectedIndex() < lstTypes.getModel().getSize() - 1) {
             System.out.println("replay data");
             btnTestActionPerformed(evt);
         }
     }//GEN-LAST:event_jButton1ActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnATMF;
     private javax.swing.JButton btnChangeParameter;
@@ -930,12 +920,14 @@ public class KNNControl extends javax.swing.JFrame implements LinkInfoReciver {
         }
         data.add(ls);
 
-        if ( data.size() >= knns.size() ) {
+        if (data.size() >= knns.size()) {
 
             HashMap<String, Float> counter = new HashMap<String, Float>();
             for (LinkInfo li : data) {
                 String key = (String) li.getMetaData().get("KNNState");
-                if(key == null) return;
+                if (key == null) {
+                    return;
+                }
                 if (counter.containsKey(key)) {
                     float tmp = counter.get(key);
                     tmp += 1;
@@ -945,114 +937,145 @@ public class KNNControl extends javax.swing.JFrame implements LinkInfoReciver {
                 }
             }
             Entry<String, Float> bestHitMa = getBestHit(counter);
-            lblStatus.setText( String.format("%10s %.2f", bestHitMa.getKey() , (float)bestHitMa.getValue()));
-            
+            lblStatus.setText(String.format("%10s %.2f", bestHitMa.getKey(), (float) bestHitMa.getValue()));
+
             counter.clear();
             for (LinkInfo li : data) {
                 String key = (String) li.getMetaData().get("KNNState");
-                if(key == null) return;
+                if (key == null) {
+                    return;
+                }
                 if (counter.containsKey(key)) {
                     Float tmp = counter.get(key);
-                    tmp += (Float)li.getMetaData().get("KNNConfidence");
+                    tmp += (Float) li.getMetaData().get("KNNConfidence");
                     counter.put(key, tmp);
                 } else {
-                    counter.put(key,(Float)li.getMetaData().get("KNNConfidence"));
+                    counter.put(key, (Float) li.getMetaData().get("KNNConfidence"));
                 }
             }
             Entry<String, Float> bestHitCo = getBestHit(counter);
-            lblConfStatus.setText( String.format("%10s %.2f", bestHitCo.getKey() , (float)bestHitCo.getValue()));
-            
+            lblConfStatus.setText(String.format("%10s %.2f", bestHitCo.getKey(), (float) bestHitCo.getValue()));
+
             counter.clear();
             for (LinkInfo li : data) {
                 String key = (String) li.getMetaData().get("KNNState");
-                if(key == null) return;
-                if((Float)li.getMetaData().get("KNNStateWeight") == null ) return;
+                if (key == null) {
+                    return;
+                }
+                if ((Float) li.getMetaData().get("KNNStateWeight") == null) {
+                    return;
+                }
                 if (counter.containsKey(key)) {
                     Float tmp = counter.get(key);
-                    tmp += (Float)li.getMetaData().get("KNNConfidence") * (Float)li.getMetaData().get("KNNStateWeight");
+                    tmp += (Float) li.getMetaData().get("KNNConfidence") * (Float) li.getMetaData().get("KNNStateWeight");
                     counter.put(key, tmp);
                 } else {
-                    counter.put(key,(Float)li.getMetaData().get("KNNConfidence") * (Float)li.getMetaData().get("KNNStateWeight"));
+                    counter.put(key, (Float) li.getMetaData().get("KNNConfidence") * (Float) li.getMetaData().get("KNNStateWeight"));
                 }
             }
             Entry<String, Float> bestHitWe = getBestHit(counter);
-            lblStateWeighted.setText( String.format("%10s %.2f", bestHitWe.getKey() , (float)bestHitWe.getValue()));
-            
+            lblStateWeighted.setText(String.format("%10s %.2f", bestHitWe.getKey(), (float) bestHitWe.getValue()));
+
             counter.clear();
             for (LinkInfo li : data) {
                 String key = (String) li.getMetaData().get("KNNState");
-                if(key == null) return;
-                if((Float)li.getMetaData().get("KNNStateMissfired") == null ) return;
-                
-                float trust = (Float)(li.getMetaData().get("KNNStateMissfired")) / (Float)(li.getMetaData().get("KNNTotalMissfired"));
-               
+                if (key == null) {
+                    return;
+                }
+                if ((Float) li.getMetaData().get("KNNStateMissfired") == null) {
+                    return;
+                }
+
+                float trust = (Float) (li.getMetaData().get("KNNStateMissfired")) / (Float) (li.getMetaData().get("KNNTotalMissfired"));
+
                 float trustThreshold = 0.1f;
-                if(ScienceTool._SCIENCE)
-                    trustThreshold = (float)ScienceTool.getParameter("trustThreshold");
+                if (ScienceTool._SCIENCE) {
+                    trustThreshold = (float) ScienceTool.getParameter("trustThreshold");
+                }
                 if( trust < trustThreshold ) continue;
-                
+                    continue;
+                }
+
                 if (counter.containsKey(key)) {
                     Float tmp = counter.get(key);
-                    tmp += (Float)li.getMetaData().get("KNNConfidence");
+                    tmp += (Float) li.getMetaData().get("KNNConfidence");
                     counter.put(key, tmp);
                 } else {
-                    counter.put(key,(Float)li.getMetaData().get("KNNConfidence"));
+                    counter.put(key, (Float) li.getMetaData().get("KNNConfidence"));
                 }
-                
+
             }
-            Entry<String, Float> bestHitMf = getBestHit(counter);
-            lblStateMissfire.setText( String.format("%10s %.2f", bestHitMf.getKey() , (float)bestHitMf.getValue()));
+            Entry<String, Float> bestHitMf = new AbstractMap.SimpleEntry<String, Float>( "None" , 0.1f);
+            if( counter.size() > 0 ){
+                bestHitMf = getBestHit(counter);
+                lblStateMissfire.setText(String.format("%10s %.2f", bestHitMf.getKey(), (float) bestHitMf.getValue()));
+            } else if( LastState != null && LastState.get(systemTestType) != null && LastState.get(systemTestType).get("Missfire") != null ){
+                bestHitMf = new AbstractMap.SimpleEntry<String, Float>( LastState.get(systemTestType).get("Missfire") , 0.1f);
+            }
             
-            if(systemTestType != null){
+
+            if (systemTestType != null) {
                 systemTestPoints += 1;
 
-             if(ScienceTool._SCIENCE)
-            {  
-                if(systemStateChanged== null)
-                    systemStateChanged = new HashMap<String, HashMap<String, Integer>>();
-                if(LastState == null)
-                    LastState = new HashMap<String, HashMap<String, String>>();
-                if(!LastState.containsKey(systemTestType))
-                    LastState.put(systemTestType, new HashMap<String, String>());
-                if(!systemStateChanged.containsKey(systemTestType))
-                {
-                    systemStateChanged.put(systemTestType, new HashMap<String, Integer>());
-                
-                systemStateChanged.get(systemTestType).put(("Mayority"),0);
-                systemStateChanged.get(systemTestType).put(("Confidence"),0);
-                systemStateChanged.get(systemTestType).put(("Weight"),0);
-                systemStateChanged.get(systemTestType).put(("Missfire"),0);
+                if (ScienceTool._SCIENCE) {
+                    if (systemStateChanged == null) {
+                        systemStateChanged = new HashMap<String, HashMap<String, Integer>>();
+                    }
+                    if (LastState == null) {
+                        LastState = new HashMap<String, HashMap<String, String>>();
+                    }
+                    if (!LastState.containsKey(systemTestType)) {
+                        LastState.put(systemTestType, new HashMap<String, String>());
+                    }
+                    if (!systemStateChanged.containsKey(systemTestType)) {
+                        systemStateChanged.put(systemTestType, new HashMap<String, Integer>());
+
+                        systemStateChanged.get(systemTestType).put(("Mayority"), 0);
+                        systemStateChanged.get(systemTestType).put(("Confidence"), 0);
+                        systemStateChanged.get(systemTestType).put(("Weight"), 0);
+                        systemStateChanged.get(systemTestType).put(("Missfire"), 0);
+                    }
+
+                    if (LastState.get(systemTestType).get("Mayority") != null && !LastState.get(systemTestType).get("Mayority").equals(bestHitMa.getKey())) {
+                        systemStateChanged.get(systemTestType).put(("Mayority"), systemStateChanged.get(systemTestType).get("Mayority") + 1);
+                    }
+                    if (LastState.get(systemTestType).get("Confidence") != null && !LastState.get(systemTestType).get("Confidence").equals(bestHitCo.getKey())) {
+                        systemStateChanged.get(systemTestType).put(("Confidence"), systemStateChanged.get(systemTestType).get("Confidence") + 1);
+                    }
+                    if (LastState.get(systemTestType).get("Weight") != null && !LastState.get(systemTestType).get("Weight").equals(bestHitWe.getKey())) {
+                        systemStateChanged.get(systemTestType).put(("Weight"), systemStateChanged.get(systemTestType).get("Weight") + 1);
+                    }
+                    if (LastState.get(systemTestType).get("Missfire") != null && !LastState.get(systemTestType).get("Missfire").equals(bestHitMf.getKey())) {
+                        systemStateChanged.get(systemTestType).put(("Missfire"), systemStateChanged.get(systemTestType).get("Missfire") + 1);
+                    }
                 }
-                
-             if(LastState.get(systemTestType).get("Mayority")!=null&&!LastState.get(systemTestType).get("Mayority").equals(bestHitMa.getKey()))
-                systemStateChanged.get(systemTestType).put(("Mayority"), systemStateChanged.get(systemTestType).get("Mayority")+1);
-             if(LastState.get(systemTestType).get("Confidence")!=null&&!LastState.get(systemTestType).get("Confidence").equals(bestHitCo.getKey()))
-                systemStateChanged.get(systemTestType).put(("Confidence"), systemStateChanged.get(systemTestType).get("Confidence")+1);
-             if(LastState.get(systemTestType).get("Weight")!=null&&!LastState.get(systemTestType).get("Weight").equals(bestHitWe.getKey()))
-                systemStateChanged.get(systemTestType).put(("Weight"), systemStateChanged.get(systemTestType).get("Weight")+1);
-             if(LastState.get(systemTestType).get("Missfire")!=null&&!LastState.get(systemTestType).get("Missfire").equals(bestHitMf.getKey()))
-                systemStateChanged.get(systemTestType).put(("Missfire"), systemStateChanged.get(systemTestType).get("Missfire")+1);
-            }
                 //System.out.println("Missfired changes :"+systemStateChanged.get(systemTestType).get("Missfire"));
-                if( bestHitMa.getKey().equals( systemTestType ) )systemTestScores.put("Mayority", systemTestScores.get("Mayority") + 1);
-                if( bestHitCo.getKey().equals( systemTestType ) )systemTestScores.put("Confidence", systemTestScores.get("Confidence") + 1);
-                if( bestHitWe.getKey().equals( systemTestType ) )systemTestScores.put("Weight", systemTestScores.get("Weight") + 1);
-                if( bestHitMf.getKey().equals( systemTestType ) )systemTestScores.put("Missfire", systemTestScores.get("Missfire") + 1);
-            
-            if(ScienceTool._SCIENCE)
-            {  
-            LastState.get(systemTestType).remove("Mayority");
-            LastState.get(systemTestType).put("Mayority",bestHitMa.getKey());
-            
-            LastState.get(systemTestType).remove("Confidence");
-            LastState.get(systemTestType).put("Confidence",bestHitCo.getKey());
-            
-            LastState.get(systemTestType).remove("Weight");
-            LastState.get(systemTestType).put("Weight",bestHitWe.getKey());
-            
-            LastState.get(systemTestType).remove("Missfire");
-            LastState.get(systemTestType).put("Missfire",bestHitMf.getKey());
-            }
+                if (bestHitMa.getKey().equals(systemTestType)) {
+                    systemTestScores.put("Mayority", systemTestScores.get("Mayority") + 1);
+                }
+                if (bestHitCo.getKey().equals(systemTestType)) {
+                    systemTestScores.put("Confidence", systemTestScores.get("Confidence") + 1);
+                }
+                if (bestHitWe.getKey().equals(systemTestType)) {
+                    systemTestScores.put("Weight", systemTestScores.get("Weight") + 1);
+                }
+                if (bestHitMf.getKey().equals(systemTestType) ) {
+                    systemTestScores.put("Missfire", systemTestScores.get("Missfire") + 1);
+                }
+
+                if (ScienceTool._SCIENCE) {
+                    LastState.get(systemTestType).remove("Mayority");
+                    LastState.get(systemTestType).put("Mayority", bestHitMa.getKey());
+
+                    LastState.get(systemTestType).remove("Confidence");
+                    LastState.get(systemTestType).put("Confidence", bestHitCo.getKey());
+
+                    LastState.get(systemTestType).remove("Weight");
+                    LastState.get(systemTestType).put("Weight", bestHitWe.getKey());
+
+                    LastState.get(systemTestType).remove("Missfire");
+                    LastState.get(systemTestType).put("Missfire", bestHitMf.getKey());
+                }
             }
         }
     }
