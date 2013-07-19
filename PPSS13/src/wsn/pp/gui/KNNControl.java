@@ -45,8 +45,8 @@ public class KNNControl extends javax.swing.JFrame implements LinkInfoReciver {
     private String systemTestType;
     private HashMap<String, Float> systemTestScores;
     private float systemTestPoints;
-    private HashMap<String,HashMap<String, String>> LastState;
-    private HashMap<String,HashMap<String, Integer>> systemStateChanged;
+    private HashMap<String, HashMap<String, String>> LastState;
+    private HashMap<String, HashMap<String, Integer>> systemStateChanged;
 
     /**
      * Creates new form KNNControl
@@ -57,7 +57,7 @@ public class KNNControl extends javax.swing.JFrame implements LinkInfoReciver {
         this.links = new HashMap<LinkKNN, Entry<Integer, Integer>>();
         this.linkFilter = lf;
         this.data = new LinkedList<LinkInfo>();
-        systemTestScores = new HashMap<String,Float>();
+        systemTestScores = new HashMap<String, Float>();
         systemTestScores.put("Mayority", 0f);
         systemTestScores.put("Confidence", 0f);
         systemTestScores.put("Weight", 0f);
@@ -992,7 +992,7 @@ public class KNNControl extends javax.swing.JFrame implements LinkInfoReciver {
                 if (ScienceTool._SCIENCE) {
                     trustThreshold = (float) ScienceTool.getParameter("trustThreshold");
                 }
-                if( trust < trustThreshold ) continue;
+                if (trust < trustThreshold) {
                     continue;
                 }
 
@@ -1003,16 +1003,17 @@ public class KNNControl extends javax.swing.JFrame implements LinkInfoReciver {
                 } else {
                     counter.put(key, (Float) li.getMetaData().get("KNNConfidence"));
                 }
-
             }
-            Entry<String, Float> bestHitMf = new AbstractMap.SimpleEntry<String, Float>( "None" , 0.1f);
-            if( counter.size() > 0 ){
+
+            Entry<String, Float> bestHitMf = new AbstractMap.SimpleEntry<String, Float>("None", 0.1f);
+            if (counter.size() > 0) {
                 bestHitMf = getBestHit(counter);
                 lblStateMissfire.setText(String.format("%10s %.2f", bestHitMf.getKey(), (float) bestHitMf.getValue()));
-            } else if( LastState != null && LastState.get(systemTestType) != null && LastState.get(systemTestType).get("Missfire") != null ){
-                bestHitMf = new AbstractMap.SimpleEntry<String, Float>( LastState.get(systemTestType).get("Missfire") , 0.1f);
+            } else if (LastState != null && LastState.get(systemTestType) != null && LastState.get(systemTestType).get("Missfire") != null) {
+                bestHitMf = new AbstractMap.SimpleEntry<String, Float>(LastState.get(systemTestType).get("Missfire"), 0.1f);
             }
-            
+
+
 
             if (systemTestType != null) {
                 systemTestPoints += 1;
@@ -1059,7 +1060,7 @@ public class KNNControl extends javax.swing.JFrame implements LinkInfoReciver {
                 if (bestHitWe.getKey().equals(systemTestType)) {
                     systemTestScores.put("Weight", systemTestScores.get("Weight") + 1);
                 }
-                if (bestHitMf.getKey().equals(systemTestType) ) {
+                if (bestHitMf.getKey().equals(systemTestType)) {
                     systemTestScores.put("Missfire", systemTestScores.get("Missfire") + 1);
                 }
 

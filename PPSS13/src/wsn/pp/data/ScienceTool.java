@@ -29,7 +29,7 @@ public class ScienceTool {
    public static DefaultComboBoxModel metaDataModel;
    
    public static final boolean _SCIENCE = true;
-   public static final boolean _HEAVY_SCIENCE = true; //takes lootsss of ram
+   public static final boolean _HEAVY_SCIENCE = false; //takes lootsss of ram
    public static final boolean _SPLIT_VALUES = true; //take part of the log only
     private static LinkedList<String> labelsSave = new LinkedList<String>();
     private static HashMap<String,Float> lastSystemTestPoints;
@@ -132,7 +132,7 @@ public class ScienceTool {
        String out = "";
        for(Map.Entry<String, Double> s:parameters.entrySet())
        {
-           out+=s.getKey()+":"+s.getValue()+"\t";
+           out+=s.getKey()+"_"+s.getValue()+"\t";
        }
        return out;
    }
@@ -310,9 +310,9 @@ public class ScienceTool {
         {
             i++;
             System.out.println("Saving file "+i+"/"+informations.keySet().size());
-           saveLink(s,"logs/"+fileName+"("+getParameterValueList().replace("\t", ":")+")/"+s+".txt",toPlot);
+           saveLink(s,"logs/"+fileName+"("+getParameterValueList().replace("\t", "-")+")/"+s+".txt",toPlot);
         }
-        saveSystemState("logs/"+fileName+"("+getParameterValueList().replace("\t", ":")+")/"+"SystemState"+".txt");
+        saveSystemState("logs/"+fileName+"("+getParameterValueList().replace("\t", "-")+")/"+"SystemState"+".txt");
         
     }
     
