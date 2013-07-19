@@ -264,6 +264,7 @@ public class ScienceTool {
            parameters.put("alpha", 0.2);
            parameters.put("trustThreshold", 0.1);
            parameters.put("PlotAmount", 500.);
+           parameters.put("KnnWindow", 100.);
        }
        
    }

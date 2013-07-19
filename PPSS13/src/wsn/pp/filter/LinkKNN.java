@@ -102,7 +102,7 @@ public class LinkKNN extends Filter implements Plotable {
     public void recvLinkInfo(LinkInfo ls) {
         if (learning && ls.metaData.containsKey("StdDev")) {
             learnPackage.add(new DataPoint(learnType, new Point(ls.power, (Double) (ls.metaData.get("StdDev")))));
-            if (learnPackage.size() > 100) {
+            if (learnPackage.size() > ScienceTool.getParameter("KnnWindow")) {
                 DataPoint avgdp = new DataPoint(learnType, new Point(0, 0));
                 for (DataPoint dp : learnPackage) {
                     avgdp.add(dp);

@@ -728,10 +728,10 @@ public class KNNControl extends javax.swing.JFrame implements LinkInfoReciver {
         systemTestScores.put("Confidence", 0f);
         systemTestScores.put("Weight", 0f);
         systemTestScores.put("Missfire", 0f);
-        systemTestPoints = 0f;
+        systemTestPoints = 1f;
         systemTestType = (String) lstTypes.getSelectedValue();
         systemStateChanged =  new HashMap<String, HashMap<String, Integer>>();
-        systemTestPoints = 0;
+        
         
         Datasource.getInstance().playRecording(file);
         
