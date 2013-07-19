@@ -29,12 +29,11 @@ public class ScienceTool {
    public static DefaultComboBoxModel metaDataModel;
    
    public static final boolean _SCIENCE = true;
-   public static final boolean _HEAVY_SCIENCE = false; //takes lootsss of ram
+   public static final boolean _HEAVY_SCIENCE = true; //takes lootsss of ram
     private static LinkedList<String> labelsSave = new LinkedList<String>();
     private static HashMap<String,Float> lastSystemTestPoints;
     private static HashMap<String,HashMap<String, Float>> lastSystemTestScore;
     private static HashMap<String, HashMap<String, Integer>> systemStateChangeds;
-    private static HashMap<String, HashMap<String, String>> lastState;
     private static float state;
    
    
@@ -46,6 +45,9 @@ public class ScienceTool {
    
    public static void addLinkInfor(LinkInfo li)
    {
+       if(!_HEAVY_SCIENCE || (li.getDestinationNode() != 1||li.getSourceNode()!=2))
+           return;
+       
        if(labelsSave==null)
            labelsSave = new LinkedList<String>();
        splitUpMetaInfo(li);      
@@ -140,7 +142,7 @@ public class ScienceTool {
        for(String s:informations.keySet())
        {
            System.out.println("Saving file "+i+"/"+informations.keySet().size());
-           saveLink(s,"logs/"+fileName+"("+getParameterValueList().replace("\t", ":")+")/"+s+".txt",null);
+           saveLink(s,"logs/"+fileName+"("+getParameterValueList().replace("\t", "-")+")/"+s+".txt",null);
            i++;
        }
    }
@@ -257,7 +259,7 @@ public class ScienceTool {
        if(parameters == null)
        {
            parameters = new HashMap<String, Double>();
-           parameters.put("knn", 6.0);
+           parameters.put("knn", 1.0);
            parameters.put("window", 30.0);
            parameters.put("alpha", 0.2);
            parameters.put("trustThreshold", 0.1);
@@ -316,6 +318,17 @@ public class ScienceTool {
         String out = getParameterValueList()+"\n";
         out+="Changed per state \n";
         out+="\t Mayority \t Confidence \t Weight \t Missfire \n";
+        if(systemStateChangeds!=null)
+        {
+        for(String systemTestType:systemStateChangeds.keySet())
+        {
+            for(String meth:systemStateChangeds.get(systemTestType).keySet())
+            {
+                out+=meth+"\t";
+            }
+            break;
+        }
+        out+="\n";
         for(String systemTestType:systemStateChangeds.keySet())
         {
             for(String meth:systemStateChangeds.get(systemTestType).keySet())
@@ -324,9 +337,11 @@ public class ScienceTool {
             }
             out+="\n";
         }
+        }
         out+="\n";
         out+="\n";
         out+="\t Mayority \t Confidence \t Weight \t Missfire \n";
+        if(lastSystemTestPoints!=null)
         for(String s:lastSystemTestPoints.keySet())
         {
         out+="\t"+s+"\t";
@@ -387,7 +402,8 @@ public class ScienceTool {
 
     public static void addSystemMethodeVariance(HashMap<String, HashMap<String, Integer>> systemStateChanged,float states) {
       state =states;
-        systemStateChangeds = systemStateChanged;
+      systemStateChangeds = systemStateChanged;
+      System.out.println("systemStaes "+ systemStateChanged.keySet().size());
     }
     
 }
