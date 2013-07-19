@@ -62,15 +62,60 @@ public class Datasource implements MessageListener {
 
     public void playRecording(File file) {
         if (slave != null) {
+            int amount = 0;
             try {
                 liveData = false;
                 FileInputStream fis = new FileInputStream(file);
+                ObjectInputStream inSize = new ObjectInputStream(fis);
+                 
+                 while (true) 
+                 {
+                     
+                     inSize.readObject();
+                     amount++;
+                 }
+                
+            }
+            catch(Exception e)
+            {
+            }
+            
+            try{
+               
+                System.out.println(amount);
+                FileInputStream fis = new FileInputStream(file);
                 ObjectInputStream in = new ObjectInputStream(fis);
                 Packet p = null;
+                int count = 0;
+                int start;
+                int border;
+                if(!ScienceTool._SPLIT_VALUES)
+                {
+                    if(ScienceTool.getParameter("Slittpart")==1.0)
+                    {
+                        start = 0;
+                        border = amount/2;
+                    }
+                    else
+                    {
+                        start = amount/2;
+                        border = amount;
+                    }
+                }
+                else
+                {
+                    start = 0;
+                    border = amount;
+                }
+                
+                
                 while (true) {
                     p = (Packet) in.readObject();
-                    this.messageReceivedWithTimestamp(p.adress, new SnoopBCMsg(p.data, 8), p.time, true);
+                    count++;
+                    if(count>=start&&count<border)
+                        this.messageReceivedWithTimestamp(p.adress, new SnoopBCMsg(p.data, 8), p.time, true);
                 }
+                
             } catch (EOFException e) { // Playback done
             } catch (ClassNotFoundException ex) {
                 Logger.getLogger(Datasource.class.getName()).log(Level.SEVERE, null, ex);

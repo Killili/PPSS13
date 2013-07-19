@@ -30,6 +30,7 @@ public class ScienceTool {
    
    public static final boolean _SCIENCE = true;
    public static final boolean _HEAVY_SCIENCE = true; //takes lootsss of ram
+   public static final boolean _SPLIT_VALUES = true; //take part of the log only
     private static LinkedList<String> labelsSave = new LinkedList<String>();
     private static HashMap<String,Float> lastSystemTestPoints;
     private static HashMap<String,HashMap<String, Float>> lastSystemTestScore;
@@ -259,12 +260,13 @@ public class ScienceTool {
        if(parameters == null)
        {
            parameters = new HashMap<String, Double>();
-           parameters.put("knn", 1.0);
+           parameters.put("knn", 5.0);
            parameters.put("window", 30.0);
            parameters.put("alpha", 0.2);
            parameters.put("trustThreshold", 0.1);
            parameters.put("PlotAmount", 500.);
            parameters.put("KnnWindow", 100.);
+           parameters.put("Slittpart", 0.);
        }
        
    }
